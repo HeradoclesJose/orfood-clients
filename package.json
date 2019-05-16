@@ -1,0 +1,25 @@
+{
+  "name": "orfood",
+  "version": "1.0.0",
+  "description": "Server for the Orfood apps, using node and mongo DB. The server is consuming a WP Database, to show it on a mobile app.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HeradoclesJose/orfood.git"
+  },
+  "keywords": [
+    "Node",
+    "Express",
+    "Node",
+    "WordPress"
+  ],
+  "author": "Heradocles, Cat",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HeradoclesJose/orfood/issues"
+  },
+  "homepage": "https://github.com/HeradoclesJose/orfood#readme"
+}
