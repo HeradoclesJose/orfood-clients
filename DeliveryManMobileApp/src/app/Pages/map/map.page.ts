@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
 
 // Providers
 import { Geolocation } from '@ionic-native/geolocation/ngx';
@@ -10,6 +12,7 @@ import {
     MarkerOptions,
     Marker
 } from '@ionic-native/google-maps';
+import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 
 @Component({
   selector: 'app-map',
@@ -19,20 +22,49 @@ import {
 export class MapPage implements OnInit {
     @ViewChild('Map') mapElement: ElementRef;
     private myLocation: LatLng;
+    private clientLocation; LatLng;
     private marker: Marker;
     private loading: boolean = true;
+    private clientData: any = null;
 
     constructor(
         private geolocation: Geolocation,
+        private route: ActivatedRoute,
+        private geocoder: NativeGeocoder,
         ) { }
 
     ngOnInit() {
-        this.geolocation.getCurrentPosition()
-            .then((position: any) => {
-                const { latitude, longitude } = position.coords
-                this.myLocation = new LatLng(latitude, longitude);
+        this.route.queryParams.subscribe((params: any) => {
+            this.clientData = params;
+        });
+        this.getMarkersPosition()
+            .then(() => {
                 this.loadMap();
-          });
+            });
+    }
+
+    getMarkersPosition() {
+        return new Promise((resolve) => {
+            // Get Deliveryman position
+            this.geolocation.getCurrentPosition()
+                .then((position: any) => {
+                    const { latitude, longitude } = position.coords;
+                    this.myLocation = new LatLng(latitude, longitude);
+                    // Get client position based on the direction
+                    this.geocoder.forwardGeocode(this.clientData.direction)
+                        .then((data: any) => {
+                            console.log('geocoder response: ', data);
+                            if (data) {
+                                const { latitude , longitude } = data[0];
+                                this.clientLocation = new LatLng(latitude, longitude);
+                                resolve();
+                            } else {
+                                // Was not possible to get direction
+                                resolve();
+                            }
+                        });
+                });
+        });
     }
 
     loadMap() {
@@ -59,6 +91,15 @@ export class MapPage implements OnInit {
                     this.marker = marker;
                     console.log('inside', marker);
                 });
+
+            const markerOptions2: MarkerOptions = {
+                position: this.clientLocation,
+                icon: 'assets/images/marker.png',
+                title: 'Client'
+            };
+
+            map.addMarker( markerOptions2 );
+
             const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
             // this.polylineService.drawPolyline(map, originString, '3.3681527,-76.5195325');
             /* map.addPolyline({

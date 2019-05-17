@@ -4,6 +4,12 @@ ion-content{
 }
 */
 
+ion-spinner{
+  transform: scale(3) !important;
+  width: 28px;
+  height: 28px;
+}
+
 .input-container {
   padding: 0 7vw;
 }
@@ -14,7 +20,9 @@ ion-content{
 }
 
 .login-icon {
-  
+  width: 100px;
+  height: 150px;
+  margin-top: 7vh;
 }
 
 .register-message-container {
@@ -25,6 +33,12 @@ ion-content{
   width: 100%;
   justify-content: center;
   background: rgba(250, 250, 250, 0.2);
+}
+
+.icon-span {
+  margin-top: 9px;
+  margin-right: 11px;
+  font-size: 1.4em;
 }
 
 ion-item {
@@ -42,11 +56,6 @@ ion-item {
 
 .logo {
   font-size: 1.3em;
-}
-
-ion-spinner {
-  width: 20vw;
-  height: 20vh;
 }
 
 .modal-screen {

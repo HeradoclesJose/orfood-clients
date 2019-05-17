@@ -39,6 +39,7 @@ export class HomePage {
 
   checkPermissions() {
       // Still gotta find a way to ask for permissions if user denies them forever
+      // Gotta check for location permissions here
       return new Promise((resolve) => {
           this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA)
               .then((data: any) => {

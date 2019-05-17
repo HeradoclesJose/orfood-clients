@@ -13,8 +13,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { HTTP } from '@ionic-native/http/ngx';
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { GoogleMaps } from '@ionic-native/google-maps';
+import { GoogleMaps} from '@ionic-native/google-maps';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 
 // Modules
 import { IonicStorageModule } from '@ionic/storage';
@@ -31,6 +32,7 @@ import { IonicStorageModule } from '@ionic/storage';
     AndroidPermissions,
     GoogleMaps,
     Geolocation,
+    NativeGeocoder,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

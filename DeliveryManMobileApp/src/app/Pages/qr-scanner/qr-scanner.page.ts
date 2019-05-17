@@ -26,9 +26,13 @@ export class QrScannerPage implements OnInit {
                       console.log('Scanned something', text);
                       this.qrScanner.hide(); // hide camera preview
                       this.scanSubscription.unsubscribe(); // stop scanning
+                      // Any by now...
+                      const QRJson: any = JSON.parse(text);
                       const navigationExtras: NavigationExtras = {
                           queryParams: {
-                              userData: text.substr(7, text.length)
+                              name: QRJson.name,
+                              phone: QRJson.phone,
+                              direction: QRJson.direction
                           }
                       };
                       console.log('json', navigationExtras);
