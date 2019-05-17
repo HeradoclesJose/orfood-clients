@@ -1,0 +1,19 @@
+<ion-content>
+  <div class="title-container">
+    <p class="logo">Soy Una App</p>
+  </div>
+  <div class="input-container" >
+    <ion-item>
+      <ion-input type="text" placeholder="Usuario" [(ngModel)]="loginData.user"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" placeholder="Contraseña" [(ngModel)]="loginData.password"></ion-input>
+    </ion-item>
+  </div>
+  <div class="button-container">
+    <ion-button class="login-button" (click)="login()">Iniciar sesion</ion-button>
+  </div>
+  <!--<div class="register-message-container">
+    <p class="register-message">Si no tienes una cuenta <a href="https://ionicframework.com/docs/">presiona aquí</a> para registrarte</p>
+  </div>-->
+</ion-content>
