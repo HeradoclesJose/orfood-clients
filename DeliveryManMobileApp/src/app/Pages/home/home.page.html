@@ -1,14 +1,16 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Ionic Blank
+      Scaneo de código
     </ion-title>
+    <ion-icon class="logout-icon" name="log-out" (click)="logout()"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="ion-padding">
-    The world is your oyster.
-    <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be your guide.</p>
+  <div class="ion-padding info">
+      <img class="qrcode-image" src="../../../assets/images/qrCode.png">
+      <p>Identifica el código de la factura, presiona el boton scanear y apunta la camara hacia dicho código</p>
+      <ion-button (click)="scanCode()">Escanear</ion-button>
   </div>
 </ion-content>

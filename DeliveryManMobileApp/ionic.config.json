@@ -1,5 +1,7 @@
 {
   "name": "Repartidor Orfood",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

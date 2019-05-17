@@ -1,0 +1,19 @@
+ion-content {
+  --background: none transparent;
+}
+
+.qr-borders {
+  position: absolute;
+  width: 38vh;
+  height: 38vh;
+  left: 9.5vh;
+  top: 23vh;
+  background-color: transparent;
+  border: solid 2px rgba(150,150,150,0.5);
+}
+
+.close-button {
+  position: absolute;
+  top: 83vh;
+  left: 24vh;
+}

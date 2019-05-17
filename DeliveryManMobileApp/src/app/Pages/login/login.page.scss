@@ -13,6 +13,10 @@ ion-content{
   justify-content: center;
 }
 
+.login-icon {
+  
+}
+
 .register-message-container {
   position: absolute;
   bottom: 0;
@@ -38,4 +42,20 @@ ion-item {
 
 .logo {
   font-size: 1.3em;
+}
+
+ion-spinner {
+  width: 20vw;
+  height: 20vh;
+}
+
+.modal-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 20;
+  background-color: rgba(0,0,0,0.4);
 }
