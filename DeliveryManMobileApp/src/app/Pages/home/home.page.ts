@@ -39,23 +39,31 @@ export class HomePage {
 
   checkPermissions() {
       // Still gotta find a way to ask for permissions if user denies them forever
-      // Gotta check for location permissions here
+      const permissionToAskFor: Array<string> = [];
       return new Promise((resolve) => {
           this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA)
               .then((data: any) => {
-                if (data.hasPermission) {
-                    resolve(true);
-                } else {
-                    console.log('here');
-                    this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
-                        .then((data2: any) => {
-                            resolve(data2.hasPermission);
-                        })
-                        .catch((err: any) => {
-                            console.log(err);
-                            resolve(false);
-                        });
+                if (!data.hasPermission) {
+                    permissionToAskFor.push(this.androidPermissions.PERMISSION.CAMERA);
                 }
+                console.log('here', this.androidPermissions.PERMISSION);
+                this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION)
+                    .then((data2: any) => {
+                        console.log(data2);
+                        if (!data2.hasPermission) {
+                           permissionToAskFor.push(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION);
+                        }
+                        if (permissionToAskFor.length > 0) {
+                            this.androidPermissions.requestPermissions(permissionToAskFor)
+                                .then((permissionsData: any) => {
+                                    console.log(permissionsData);
+                                    resolve(permissionsData.hasPermission);
+                                })
+                                .catch(() => resolve(false)); // Gotta add an alert
+                        } else {
+                            resolve(true);
+                        }
+                    });
               });
       });
   }

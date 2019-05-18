@@ -78,6 +78,24 @@ export class MapPage implements OnInit {
                 target: this.myLocation,
                 zoom: 16
             };
+
+            const boundsOfRoute: Array<LatLng> = [];
+          /*  boundsOfRoute.push(directions.routes[0].bounds.northeast);
+            boundsOfRoute.push(directions.routes[0].bounds.southwest);*/
+
+            // So it fix better to the screen
+            // Still gotta find better values
+            /*const offSetValue: number = 0.001;
+            boundsOfRoute[0].lat += offSetValue + 0.007;
+            boundsOfRoute[0].lng += offSetValue;
+            boundsOfRoute[1].lat -= offSetValue + 0.003;
+            boundsOfRoute[1].lng -= offSetValue;*/
+
+            // Set Camera too look the route
+          /*  this.map.animateCamera({
+                target: boundsOfRoute,
+                duration: 2000
+            });*/
             map.animateCamera( position );
 
             const markerOptions: MarkerOptions = {
