@@ -1,7 +1,7 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>
-      Scaneo de código
+      Orfood
     </ion-title>
     <ion-icon class="logout-icon" name="log-out" (click)="logout()"></ion-icon>
   </ion-toolbar>
@@ -10,7 +10,7 @@
 <ion-content>
   <div class="ion-padding info">
       <img class="qrcode-image" src="../../../assets/images/qrCode.png">
-      <p>Identifica el código de la factura, presiona el boton scanear y apunta la camara hacia dicho código</p>
+      <p>Identifica el código QR del pedido, presiona el botón Escanear y enfoca la camara hacia el código</p>
       <ion-button (click)="scanCode()">Escanear</ion-button>
   </div>
 </ion-content>

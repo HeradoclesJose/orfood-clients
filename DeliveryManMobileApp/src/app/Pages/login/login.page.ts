@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 
 // Services
 import { AuthService } from '../../Services/auth/auth.service';
@@ -12,7 +12,12 @@ import { AuthService } from '../../Services/auth/auth.service';
 export class LoginPage implements OnInit {
   private loginData: {user: string, password: string} = {user: '', password: ''};
   private loading: boolean = false;
-  constructor(private auth: AuthService, private navCtrl: NavController) { }
+
+  constructor(
+      private auth: AuthService,
+      private navCtrl: NavController,
+      private alertCtrl: AlertController
+  ) { }
 
   ngOnInit() {
   }
@@ -20,10 +25,25 @@ export class LoginPage implements OnInit {
   login() {
       this.loading = true;
       this.auth.login(this.loginData)
-          .then((data: any) => {
+          .then(async (data: any) => {
             console.log('login data', data); // Check server response to allow login
             this.loading = false;
-            this.navCtrl.navigateForward('/home');
+            if (true) {
+                this.navCtrl.navigateForward('/home');
+            } else {
+                const alert: any = await this.alertCtrl.create({
+                    header: 'Error',
+                    message: 'Respuesta del servidor',
+                    buttons: [
+                        {
+                            text: 'Aceptar',
+                            role: 'cancel',
+                            cssClass: 'secondary'
+                        }
+                    ]
+                });
+                await alert.present();
+            }
           })
           .catch((error) => {
             // Show error message for user

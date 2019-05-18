@@ -2,5 +2,14 @@
   <div class="modal-screen" *ngIf="loading">
     <ion-spinner color="primary"></ion-spinner>
   </div>
+  <div class="info-screen">
+    <p>Cliente: {{clientData.name}}</p>
+    <p>Direccion: {{clientData.direction}}</p>
+  </div>
   <div #Map id="map"></div>
+  <!--If the button is placed inside the info screen, it dont get the touches-->
+  <div class="call-button" (click)="call()" shape="round">
+    <ion-icon name="ios-call"></ion-icon>
+  </div>
+  <ion-button *ngIf="markersAndRouteDisplayed" class="finish-button" (click)="finishDelivery()">Finalizar pedido</ion-button>
 </ion-content>

@@ -16,7 +16,9 @@ export class AuthService {
       return new Promise((resolve) => {
           this.http.post(this.loginUrl, loginData, {})
               .then((data: any) => {
-                  this.storage.set('sesion', 'active'); // Just to know the user is logged later
+                  if (true) {
+                      this.storage.set('sesion', 'active'); // Just to know the user is logged later
+                  }
                   resolve(data);
               });
       });

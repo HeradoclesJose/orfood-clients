@@ -19,10 +19,10 @@ ion-spinner{
   justify-content: center;
 }
 
-.login-icon {
-  width: 100px;
-  height: 150px;
-  margin-top: 7vh;
+.login-image {
+  width: 400px;
+  height: 200px;
+  margin-top: 4vh;
 }
 
 .register-message-container {
@@ -42,7 +42,7 @@ ion-spinner{
 }
 
 ion-item {
-  margin: 9vh 0;
+  margin-bottom: 9vh;
 }
 
 .register-message {
@@ -52,6 +52,7 @@ ion-item {
 .title-container {
   display: flex;
   justify-content: center;
+  margin: 2vh 0;
 }
 
 .logo {
