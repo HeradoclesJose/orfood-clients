@@ -4,11 +4,11 @@
   },
 
   "hashpassword": {
-    "password": "hashcrypt", "salt": "$2a$10$nGbo.FOZB9Chu1vUEmbAqOCDTG005pUtJRuc6TH1LkgZ9yZPZk/a6"
+    "password": "HeraCatJoseanKawai", "salt": "$2a$10$nGbo.FOZB9Chu1vUEmbAqOCDTG005pUtJRuc6TH1LkgZ9yZPZk/a6"
   },
 
   "secret": {
-    "token": "secrettokenforuru"
+    "token": "OrfoodTokenCatech"
   }
 
 }
