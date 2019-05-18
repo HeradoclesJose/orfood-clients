@@ -5,6 +5,10 @@ const dbconnect = require('./db/dbconnection.js')
 const dbinfo = require('./config/config.json')
 const path = require('path')
 
+// routes
+const signup = require('./routes/signup.js')
+const login = require('./routes/login.js')
+
 // Connection to Mlbas!
 dbconnect.connect(dbinfo)
 
@@ -26,11 +30,6 @@ app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   next()
 })
-
-// routes
-
-const signup = require('./routes/signup')
-const login = require('./routes/login')
 
 // giving express access to routes
 signup(app)
