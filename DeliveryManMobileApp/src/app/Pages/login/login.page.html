@@ -1,0 +1,26 @@
+<ion-content>
+  <div class="modal-screen" *ngIf="loading" >
+    <ion-spinner name="circles"></ion-spinner>
+  </div>
+
+  <div class="title-container">
+    <!--Waitin for the real image-->
+    <img class="login-icon" src="../../../assets/icon/orfoodIcon.png" >
+  </div>
+  <div class="input-container" >
+    <ion-item>
+      <span class="icon-span"><ion-icon name="person"></ion-icon></span>
+      <ion-input type="text" placeholder="Usuario" [(ngModel)]="loginData.user"></ion-input>
+    </ion-item>
+    <ion-item>
+      <span class="icon-span" ><ion-icon name="md-lock"></ion-icon></span>
+      <ion-input type="password" placeholder="Contraseña" [(ngModel)]="loginData.password"></ion-input>
+    </ion-item>
+  </div>
+  <div class="button-container">
+    <ion-button color="warning" class="login-button" (click)="login()">Iniciar sesion</ion-button>
+  </div>
+  <!--<div class="register-message-container">
+    <p class="register-message">Si no tienes una cuenta <a href="https://ionicframework.com/docs/">presiona aquí</a> para registrarte</p>
+  </div>-->
+</ion-content>
