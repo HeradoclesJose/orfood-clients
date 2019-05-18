@@ -1,15 +1,9 @@
 const mongoose = require('mongoose')
-/* const models = require('../Schemas/users') */
+const models = require('../Schemas/users.js')
 const hash = require('../auth/hashpass')
 const jwt = require('../auth/jwtmodule')
 
 // Giving express access to route.
-
-function getData (id) {
-  // eslint-disable-next-line no-undef
-  var query = users.find({ user: id })
-  return query
-};
 
 module.exports = function (app) {
   app.post('/login', function (req, res) {
@@ -23,8 +17,14 @@ module.exports = function (app) {
       if (count === 1) {
         console.log('The user exists!')
 
-        var query = getData(req.body.user)
+        // eslint-disable-next-line no-inner-declarations
+        function getData (id) {
+          // eslint-disable-next-line no-undef
+          var query = users.find({ user: id })
+          return query
+        };
 
+        var query = getData(req.body.user)
         query.exec(function (err, user) {
           if (err) return console.log(err)
           else {
@@ -35,7 +35,6 @@ module.exports = function (app) {
               'response': 'You are now logged in.',
               'token': token,
               'user': user[0].user,
-              'rights': user[0].rights,
               'status': '200' })
           }
         })
