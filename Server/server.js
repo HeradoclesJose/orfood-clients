@@ -6,7 +6,6 @@ const dbinfo = require('./config/config.json')
 const path = require('path')
 
 // routes
-const signup = require('./routes/signup.js')
 const login = require('./routes/login.js')
 
 // Connection to Mlbas!
@@ -32,7 +31,6 @@ app.use(function (req, res, next) {
 })
 
 // giving express access to routes
-signup(app)
 login(app)
 
 // start the server
