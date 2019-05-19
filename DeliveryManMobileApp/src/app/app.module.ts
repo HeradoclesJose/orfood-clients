@@ -16,6 +16,8 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { GoogleMaps} from '@ionic-native/google-maps';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
+import { CallNumber } from '@ionic-native/call-number/ngx';
+
 
 // Modules
 import { IonicStorageModule } from '@ionic/storage';
@@ -33,6 +35,7 @@ import { IonicStorageModule } from '@ionic/storage';
     GoogleMaps,
     Geolocation,
     NativeGeocoder,
+    CallNumber,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

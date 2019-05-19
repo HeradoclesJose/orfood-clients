@@ -2,6 +2,23 @@
   height: 100%;
 }
 
+.info-screen {
+  color: white;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background-color: #d75300;
+  padding: 9px;
+}
+
+.call-button {
+  position: absolute;
+  font-size: 32px;
+  right: 23px;
+  top: 24px;
+  color: white;
+}
+
 ion-spinner {
   width: 20vw;
   height: 20vh;
@@ -18,3 +35,8 @@ ion-spinner {
   background-color: rgba(0,0,0,0.4);
 }
 
+.finish-button {
+  position: absolute;
+  top: 83vh;
+  left: 16vh;
+}

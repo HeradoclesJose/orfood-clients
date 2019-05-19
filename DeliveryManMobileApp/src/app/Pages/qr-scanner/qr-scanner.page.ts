@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { NavigationExtras } from '@angular/router';
 
@@ -13,7 +13,10 @@ import {QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 export class QrScannerPage implements OnInit {
   private scanSubscription: any = null;
 
-  constructor(private navCtrl: NavController, private qrScanner: QRScanner) { }
+  constructor(
+      private navCtrl: NavController,
+      private qrScanner: QRScanner,
+      private zone: NgZone ) { }
 
   ngOnInit() {
       this.qrScanner.prepare()
@@ -36,7 +39,9 @@ export class QrScannerPage implements OnInit {
                           }
                       };
                       console.log('json', navigationExtras);
-                      this.navCtrl.navigateForward(['/map'],  navigationExtras); // Redirect to map
+                      this.zone.run(() => {
+                          this.navCtrl.navigateForward(['/map'],  navigationExtras); // Redirect to map
+                      });
                   });
                   this.qrScanner.show();
               } else if (status.denied) {
