@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const models = require('../Schemas/users.js')
+const models = require('../schemas/users.js')
 const hash = require('../auth/hashpass')
 const jwt = require('../auth/jwtmodule')
 
