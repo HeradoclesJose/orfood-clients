@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+// eslint-disable-next-line no-unused-vars
 const models = require('../schemas/users.js')
 const hash = require('../auth/hashpass')
 const jwt = require('../auth/jwtmodule')
@@ -17,27 +18,13 @@ module.exports = function (app) {
       if (count === 1) {
         console.log('The user exists!')
 
-        // eslint-disable-next-line no-inner-declarations
-        function getData (id) {
-          // eslint-disable-next-line no-undef
-          var query = users.find({ user: id })
-          return query
-        };
+        token = jwt.createToken(req.body.user)
 
-        var query = getData(req.body.user)
-        query.exec(function (err, user) {
-          if (err) return console.log(err)
-          else {
-            console.log(user[0])
-            token = jwt.createToken(user[0].user, user[0].rights)
-
-            res.json({
-              'response': 'You are now logged in.',
-              'token': token,
-              'user': user[0].user,
-              'status': '200' })
-          }
-        })
+        res.json({
+          'response': 'You are now logged in.',
+          'token': token,
+          'user': req.body.user,
+          'status': '200' })
       } else {
         console.log('Wrong user/pass')
         res.json({

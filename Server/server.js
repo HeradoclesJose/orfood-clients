@@ -39,3 +39,5 @@ signup(app)
 app.listen(app.get('port'), function () {
   console.log('Express server () listening on localhost:' + app.get('port'))
 })
+
+// Starting socket.io for the Geolocation service
