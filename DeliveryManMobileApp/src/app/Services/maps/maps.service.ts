@@ -64,6 +64,7 @@ export class MapsService {
             url = url + '&language=es&units=metric';
             this.http.get(url, {}, {})
                 .then((data: any) => {
+                    console.log('polyline', data);
                     const json: any = JSON.parse(data.data);
                     const routeDrawing = json.routes[0].overview_polyline;
                     console.log(this.polyline);
@@ -79,6 +80,9 @@ export class MapsService {
                         this.polyline = polyline;
                         resolve();
                     });
+                })
+                .catch((error) => {
+                    console.log(error);
                 });
         });
     }

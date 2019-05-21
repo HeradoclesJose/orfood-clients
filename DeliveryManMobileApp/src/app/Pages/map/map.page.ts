@@ -33,6 +33,8 @@ export class MapPage implements OnInit {
     private loading: boolean = true;
     private clientData: any = null; // Gotta define this stucture
     private markersAndRouteDisplayed: boolean = false;
+    private locationUpdateInterval: any = null;
+    private lastTimeStamp: number = null; // To prevent sending the same location more than twice
 
     constructor(
         private geolocation: Geolocation,
@@ -51,9 +53,12 @@ export class MapPage implements OnInit {
         });
         this.getMarkersPosition()
             .then(() => {
-                console.log(this.clientLocation);
                 this.loadMap();
             });
+    }
+
+    ionViewWillLeave() {
+        clearInterval(this.locationUpdateInterval);
     }
 
     getMarkersPosition() {
@@ -63,7 +68,7 @@ export class MapPage implements OnInit {
                 .then((position: any) => {
                     const { latitude, longitude } = position.coords; // My position
                     this.myLocation = new LatLng(latitude, longitude);
-                    this.getClientPosition()
+                    this.getClientPosition(0)
                         .then(() => {
                             resolve();
                         });
@@ -71,28 +76,57 @@ export class MapPage implements OnInit {
         });
     }
 
-    getClientPosition() {
+    // Separated 'cause I need a recursive function
+    getClientPosition(tries: number) {
         // Get client position based on the direction
         return new Promise((resolve) => {
             this.geocoder.forwardGeocode(this.clientData.direction)
                 .then((data: any) => {
-                    console.log('geocoder response: ', data);
-                    if (data.length) {
-                        console.log('si hubo respuesta');
-                        const { latitude , longitude } = data[0]; // Client position
-                        this.clientLocation = new LatLng(latitude, longitude);
-                        resolve();
+                    console.log('geocoder succesfull response: ', data);
+                    const { latitude , longitude } = data[0]; // Client position
+                    this.clientLocation = new LatLng(latitude, longitude);
+                    resolve();
+                })
+                .catch(async (error) => {
+                    console.log('geocoder error:', error);
+                    if (error !== 'Geocoder:getFromLocationName Error: grpc failed') { // Error of the plugin, require asking twice
+                        const msg = 'Ha ocurrido un error al intentar obtener la posición del cliente, revisa tu conneción a internet';
+                        this.showErrorMessage(msg);
                     } else {
-                        // Was not possible to get direction
+                        // Was not possible to get direction 'cause Geocoder:getFromLocationName Error: grpc failed
                         // This loop could kill the app, just a temporal solution
-                        console.log('no hubo');
-                        this.getClientPosition()
-                            .then(() => {
-                                resolve();
-                            });
+                        if (tries <= 3) {
+                            setTimeout(() => {
+                                this.getClientPosition(tries + 1)
+                                    .then(() => {
+                                        resolve();
+                                    });
+                            }, 1000);
+                        } else {
+                            const msg = 'Ocurrió un error inesperado, vuelve a intentar en unos segundos';
+                            this.showErrorMessage(msg);
+                        }
                     }
                 });
         });
+    }
+
+    async showErrorMessage(message: string) {
+        const alert: any = await this.alertCtrl.create({
+            header: '¡Vaya!... ha ocurrido un error',
+            message,
+            buttons: [
+                {
+                    text: 'Aceptar',
+                    handler: () => {
+                        this.zone.run(() => {
+                            this.navCtrl.navigateRoot('/home');
+                        });
+                    }
+                }
+            ]
+        });
+        await alert.present();
     }
 
     loadMap() {
@@ -108,6 +142,7 @@ export class MapPage implements OnInit {
             this.loading = false;
             // Start watching position
             this.watchUserPosition(map);
+            // this.startPolylineInterval(map);
 
             // In order to be used in the google API Request
             const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
@@ -115,7 +150,6 @@ export class MapPage implements OnInit {
 
             this.mapsService.getBoundariesAndDrawInitialPolyline(map, originString, destinationString)
                 .then((googleResponse: any) => {
-                    console.log('goog', googleResponse);
                     const boundsOfRoute: Array<LatLng> = [];
                     boundsOfRoute.push(googleResponse.routes[0].bounds.northeast);
                     boundsOfRoute.push(googleResponse.routes[0].bounds.southwest);
@@ -157,32 +191,48 @@ export class MapPage implements OnInit {
             };
 
             map.addMarker( markerOptions2 );
+        })
+        .catch((error) => {
+           console.log(error);
         });
     }
 
     watchUserPosition(map: any): void {
-        const watch = this.geolocation.watchPosition();
-        watch.subscribe((data) => {
-            const { latitude, longitude } = data.coords;
-            // data can be a set of coordinates, or an error (if an error occurred).
-            // data.coords.latitude
-            // data.coords.longitude
-            const tempMyLocation = this.myLocation;
-            this.myLocation = new LatLng(latitude, longitude);
-            console.log(Math.abs(this.myLocation.lat - tempMyLocation.lat));
-            console.log(Math.abs(this.myLocation.lng - tempMyLocation.lng));
-            // This should not be implemented
-           /* if (Math.abs(this.myLocation.lat - tempMyLocation.lat) > 0.0009
-                || Math.abs(this.myLocation.lng - tempMyLocation.lng) > 0.0009) {
-                const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
-                this.polylineService.drawPolyline(map, originString, '3.3681527,-76.5195325');
-            }*/
-            console.log(data);
-            if (this.marker) {
-                this.marker.setPosition(this.myLocation);
-            }
-        });
+        this.locationUpdateInterval  = setInterval(() => {
+            console.log('se ejecuta el intervalo');
+            this.geolocation.getCurrentPosition()
+                .then((position) => {
+                    console.log('la posicion obtenida fue:', position);
+                    if (position.timestamp !== this.lastTimeStamp) {
+                        this.lastTimeStamp = position.timestamp;
+                        const {latitude, longitude} = position.coords;
+                        this.myLocation = new LatLng(latitude, longitude);
+                        console.log('new location', this.myLocation);
+                        if (this.marker) {
+                            const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
+                            const destinationString: string = this.clientLocation.lat.toString() + ',' + this.clientLocation.lng;
+                            this.mapsService.drawPolyline(map, originString, destinationString)
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                            this.marker.setPosition(this.myLocation);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.log('Interval current position error:', error);
+                });
+        }, 10000);
     }
+
+  /*  startPolylineInterval(map: any) {
+        const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
+        const destinationString: string = this.clientLocation.lat.toString() + ',' + this.clientLocation.lng;
+        const polylineInterval = setInterval(() => {
+            console.log('polyline redrwan');
+            this.mapsService.drawPolyline(map, originString, destinationString);
+        }, 60000);
+    }*/
 
     async finishDelivery() {
         const distance = this.mapsService.distanceBetweenCoordinates(this.myLocation, this.clientLocation);

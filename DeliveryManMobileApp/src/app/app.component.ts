@@ -22,9 +22,8 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
-        this.storage.get('sesion')
+        this.storage.get('token')
             .then((data) => {
-                console.log('data', data);
                 if (data) { // If there is a sesion
                     this.navCtrl.navigateForward('/home')
                         .then(() => {

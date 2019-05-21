@@ -4,6 +4,9 @@ import { NavController, AlertController } from '@ionic/angular';
 // Services
 import { AuthService } from '../../Services/auth/auth.service';
 
+// Models
+import { ServerResponse } from '../../Interfaces/server-response';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -28,12 +31,12 @@ export class LoginPage implements OnInit {
           .then(async (data: any) => {
             console.log('login data', data); // Check server response to allow login
             this.loading = false;
-            if (true) {
+            if (data.status === '200' && data.message === 'Inicio exitoso') {
                 this.navCtrl.navigateForward('/home');
             } else {
                 const alert: any = await this.alertCtrl.create({
                     header: 'Error',
-                    message: 'Respuesta del servidor',
+                    message: data.message,
                     buttons: [
                         {
                             text: 'Aceptar',
