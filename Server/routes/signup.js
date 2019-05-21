@@ -1,11 +1,12 @@
 // We export the driver, models, etc...
 const mongoose = require('mongoose')
-const models = require('../Schemas/users')
+const models = require('../schemas/users')
+const isAuth = require('../auth/IsAuth.js')
 const hash = require('../auth/hashpass')
 
 // Giving express access to route.
 module.exports = function (app) {
-  app.post('/signup', function (req, res) {
+  app.post('/signup', isAuth.isAuthenticated, function (req, res) {
     // We create the Document and recover the model.
     var users = mongoose.model('users')
     var user = users({ name: req.body.name, user: req.body.user, pass: hash.hashPassword(req.body.password) })
