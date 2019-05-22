@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { AlertController, NavController} from '@ionic/angular';
 import { NavigationExtras } from '@angular/router';
 
 // Providers
@@ -16,7 +16,8 @@ export class QrScannerPage implements OnInit {
   constructor(
       private navCtrl: NavController,
       private qrScanner: QRScanner,
-      private zone: NgZone ) { }
+      private zone: NgZone,
+      private alertCtrl: AlertController) { }
 
   ngOnInit() {
       this.qrScanner.prepare()
@@ -25,23 +26,47 @@ export class QrScannerPage implements OnInit {
                   // camera permission was granted
 
                   // start scanning
-                  this.scanSubscription = this.qrScanner.scan().subscribe((text: string) => {
+                  this.scanSubscription = this.qrScanner.scan().subscribe(async (text: string) => {
                       console.log('Scanned something', text);
                       this.qrScanner.hide(); // hide camera preview
                       this.scanSubscription.unsubscribe(); // stop scanning
                       // Any by now...
-                      const QRJson: any = JSON.parse(text);
-                      const navigationExtras: NavigationExtras = {
-                          queryParams: {
-                              name: QRJson.name,
-                              phone: QRJson.phone,
-                              direction: QRJson.direction
-                          }
-                      };
-                      console.log('json', navigationExtras);
-                      this.zone.run(() => {
-                          this.navCtrl.navigateForward(['/map'],  navigationExtras); // Redirect to map
-                      });
+                      let QRJson: any = null;
+                      try {
+                          QRJson = JSON.parse(text);
+                      } catch (error) {
+                          console.log('error', error);
+                      }
+                      if (QRJson) {
+                          // Gotta check it's a json with the structure I want
+                          const navigationExtras: NavigationExtras = {
+                              queryParams: {
+                                  deliveryId: QRJson.deliverId,
+                                  name: QRJson.name,
+                                  phone: QRJson.phone,
+                                  direction: QRJson.direction
+                              }
+                          };
+                          console.log('json', navigationExtras);
+                          this.zone.run(() => {
+                              this.navCtrl.navigateForward(['/map'], navigationExtras); // Redirect to map
+                          });
+                      } else {
+                          const alert: any = await this.alertCtrl.create({
+                              header: 'El código escaneado no es un pedido',
+                              buttons: [
+                                  {
+                                      text: 'Aceptar',
+                                      handler: () => {
+                                          this.zone.run(() => {
+                                              this.navCtrl.navigateRoot('/home');
+                                          });
+                                      }
+                                  }
+                              ]
+                          });
+                          await alert.present();
+                      }
                   });
                   this.qrScanner.show();
               } else if (status.denied) {

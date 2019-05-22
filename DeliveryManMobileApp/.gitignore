@@ -21,7 +21,7 @@ npm-debug.log*
 coverage/
 www/
 node_modules/
-src/app/API
+src/app/API/APIKeys.ts
 tmp/
 temp/
 platforms/

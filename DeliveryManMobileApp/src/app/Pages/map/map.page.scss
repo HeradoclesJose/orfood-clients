@@ -9,13 +9,23 @@
   width: 100%;
   background-color: #d75300;
   padding: 9px;
+  height: 18vh;
+}
+
+.client-name {
+  width: 45vh;
+}
+
+.client-direction {
+  width: 75vw;
 }
 
 .call-button {
   position: absolute;
   font-size: 32px;
-  right: 23px;
-  top: 24px;
+  right: 6vw;
+  top: 5vh;
+  padding-top: 6px;
   color: white;
 }
 
