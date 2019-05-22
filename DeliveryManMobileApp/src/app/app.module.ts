@@ -17,6 +17,7 @@ import { GoogleMaps} from '@ionic-native/google-maps';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { CallNumber } from '@ionic-native/call-number/ngx';
+import { BackgroundGeolocation } from '@ionic-native/background-geolocation/ngx';
 
 
 // Modules
@@ -36,6 +37,7 @@ import { IonicStorageModule } from '@ionic/storage';
     Geolocation,
     NativeGeocoder,
     CallNumber,
+    BackgroundGeolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
