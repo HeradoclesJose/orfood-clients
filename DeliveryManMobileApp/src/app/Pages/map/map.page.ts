@@ -18,6 +18,10 @@ import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 
 // Services
 import { MapsService } from '../../Services/maps/maps.service';
+import { SocketService } from '../../Services/socket/socket.service';
+
+// Models
+import { SocketData } from '../../Interfaces/socket-data';
 
 @Component({
   selector: 'app-map',
@@ -44,7 +48,8 @@ export class MapPage implements OnInit {
         private navCtrl: NavController,
         private alertCtrl: AlertController,
         private callNumber: CallNumber,
-        private zone: NgZone
+        private zone: NgZone,
+        private socket: SocketService
         ) { }
 
     ngOnInit() {
@@ -141,6 +146,7 @@ export class MapPage implements OnInit {
         map.one( GoogleMapsEvent.MAP_READY ).then( ( data: any ) => {
             this.loading = false;
             // Start watching position
+            this.socket.connect('1'); // Hardcoded id
             this.watchUserPosition(map);
             // this.startPolylineInterval(map);
 
@@ -208,6 +214,14 @@ export class MapPage implements OnInit {
                         const {latitude, longitude} = position.coords;
                         this.myLocation = new LatLng(latitude, longitude);
                         console.log('new location', this.myLocation);
+
+                        const socketData: SocketData = {
+                            id: '1',
+                            lat: latitude,
+                            lng: longitude
+                        };
+
+                        this.socket.send(socketData);
                         if (this.marker) {
                             const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
                             const destinationString: string = this.clientLocation.lat.toString() + ',' + this.clientLocation.lng;

@@ -33,6 +33,7 @@ export class QrScannerPage implements OnInit {
                       const QRJson: any = JSON.parse(text);
                       const navigationExtras: NavigationExtras = {
                           queryParams: {
+                              deliveryId: QRJson.deliverId,
                               name: QRJson.name,
                               phone: QRJson.phone,
                               direction: QRJson.direction
