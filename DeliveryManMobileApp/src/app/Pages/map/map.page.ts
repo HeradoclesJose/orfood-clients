@@ -146,7 +146,7 @@ export class MapPage implements OnInit {
         map.one( GoogleMapsEvent.MAP_READY ).then( ( data: any ) => {
             this.loading = false;
             // Start watching position
-            this.socket.connect('1'); // Hardcoded id
+            //this.socket.connect('1'); // Hardcoded id
             this.watchUserPosition(map);
             // this.startPolylineInterval(map);
 
@@ -204,7 +204,7 @@ export class MapPage implements OnInit {
     }
 
     watchUserPosition(map: any): void {
-        this.locationUpdateInterval  = setInterval(() => {
+   /*     this.locationUpdateInterval  = setInterval(() => {
             console.log('se ejecuta el intervalo');
             this.geolocation.getCurrentPosition()
                 .then((position) => {
@@ -236,7 +236,7 @@ export class MapPage implements OnInit {
                 .catch((error) => {
                     console.log('Interval current position error:', error);
                 });
-        }, 10000);
+        }, 10000);*/
     }
 
   /*  startPolylineInterval(map: any) {
