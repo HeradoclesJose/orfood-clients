@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import {NavController, AlertController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 
 
@@ -15,6 +15,13 @@ import {
     Marker, GoogleMapOptions
 } from '@ionic-native/google-maps';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
+import {
+    BackgroundGeolocation,
+    BackgroundGeolocationConfig,
+    BackgroundGeolocationResponse,
+    BackgroundGeolocationEvents
+} from '@ionic-native/background-geolocation/ngx';
+
 
 // Services
 import { MapsService } from '../../Services/maps/maps.service';
@@ -49,10 +56,13 @@ export class MapPage implements OnInit {
         private alertCtrl: AlertController,
         private callNumber: CallNumber,
         private zone: NgZone,
-        private socket: SocketService
-        ) { }
+        private socket: SocketService,
+        private platform: Platform,
+        private backgroundGeolocation: BackgroundGeolocation
+        ) {}
 
     ngOnInit() {
+        this.backgroundGeolocationInit();
         this.route.queryParams.subscribe((params: any) => {
             this.clientData = params;
         });
@@ -146,7 +156,7 @@ export class MapPage implements OnInit {
         map.one( GoogleMapsEvent.MAP_READY ).then( ( data: any ) => {
             this.loading = false;
             // Start watching position
-            //this.socket.connect('1'); // Hardcoded id
+            this.socket.connect('1'); // Hardcoded id
             this.watchUserPosition(map);
             // this.startPolylineInterval(map);
 
@@ -204,7 +214,7 @@ export class MapPage implements OnInit {
     }
 
     watchUserPosition(map: any): void {
-   /*     this.locationUpdateInterval  = setInterval(() => {
+        this.locationUpdateInterval  = setInterval(() => {
             console.log('se ejecuta el intervalo');
             this.geolocation.getCurrentPosition()
                 .then((position) => {
@@ -236,7 +246,46 @@ export class MapPage implements OnInit {
                 .catch((error) => {
                     console.log('Interval current position error:', error);
                 });
-        }, 10000);*/
+        }, 10000);
+    }
+
+    backgroundGeolocationInit() {
+
+        const config: BackgroundGeolocationConfig = {
+            desiredAccuracy: 10,
+            stationaryRadius: 1,
+            distanceFilter: 30,
+            interval: 10000,
+            debug: true, //  enable this hear sounds for background-geolocation life-cycle.
+            stopOnTerminate: true, // enable this to clear background location settings when the app terminates
+        };
+
+        this.backgroundGeolocation.configure(config)
+            .then(() => {
+
+                this.backgroundGeolocation.on(BackgroundGeolocationEvents.location).subscribe((location: BackgroundGeolocationResponse) => {
+                    console.log(location);
+                    const { latitude, longitude } = location;
+                    this.myLocation = new LatLng(latitude, longitude);
+                    const msg: SocketData = {
+                        id: '1',
+                        lat: latitude,
+                        lng: longitude
+                    };
+                    this.socket.send(msg);
+                });
+
+            });
+
+        this.platform.ready()
+            .then(() => {
+                this.platform.pause.subscribe(() => {
+                    this.backgroundGeolocation.start();
+                });
+                this.platform.resume.subscribe(() => {
+                    this.backgroundGeolocation.stop();
+                });
+            });
     }
 
   /*  startPolylineInterval(map: any) {
