@@ -16,8 +16,6 @@ module.exports = function (app) {
     // We make a query to check if the data is right, then we send (or not) the token.
     users.countDocuments({ user: req.body.user, pass: hash.hashPassword(req.body.password) }, function (_err, count) {
       if (count === 1) {
-        console.log('The user exists!')
-
         token = jwt.createToken(req.body.user)
 
         res.json({
@@ -26,7 +24,6 @@ module.exports = function (app) {
           'user': req.body.user,
           'status': '200' })
       } else {
-        console.log('Wrong user/pass')
         res.json({
           'response': 'Wrong user/pass!',
           'status': '418'

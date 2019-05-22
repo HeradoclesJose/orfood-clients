@@ -1,9 +1,16 @@
 // modules
 const express = require('express')
 const bodyParser = require('body-parser')
+const http = require('http')
+const socketIo = require('socket.io')
+const path = require('path')
 const dbconnect = require('./db/dbconnection.js')
 const dbinfo = require('./config/config.json')
-const path = require('path')
+// This is for the socket
+// eslint-disable-next-line no-unused-vars
+const models = require('./schemas/locationdata.js')
+const mongoose = require('mongoose')
+const find = require('./routes/geolocation.js')
 
 // routes
 const login = require('./routes/login.js')
@@ -12,9 +19,13 @@ const signup = require('./routes/signup.js')
 // Connection to Mlbas!
 dbconnect.connect(dbinfo)
 
+// Setting up the port variable
+var port = process.env.PORT || 9390
+const portS = port + 1
+
 // setting express
 var app = express()
-app.set('port', process.env.PORT || 9390)
+app.set('port', port)
 app.use('/static', express.static(path.join(__dirname, 'public')))
 
 // The use of the bodyParser constructor (app.use(bodyParser());) has been deprecated
@@ -41,3 +52,51 @@ app.listen(app.get('port'), function () {
 })
 
 // Starting socket.io for the Geolocation service
+const server = http.createServer(app)
+const io = socketIo(server)
+
+// Setting up the Sockets
+
+const nsp = io.of('/geolocationOrfood')
+
+nsp.on('connection', function (socket) {
+  socket.on('create', function (msg) {
+    var data = JSON.parse(msg)
+    var geolocation = mongoose.model('geolocation')
+    var location = geolocation({ idOrder: data.order, idDeliveryMan: data.delivery, lat: data.latitude, long: data.longitude })
+
+    socket.join(data.order)
+    location.save(function (err) {
+      if (err != null) console.log(err)
+    })
+  })
+
+  socket.on('join', function (msg) {
+    var data = JSON.parse(msg)
+    var geolocation = mongoose.model('geolocation')
+
+    socket.join(data.order)
+
+    find.findPosition(geolocation, data, socket)
+  })
+
+  socket.on('position', function (msg) {
+    var data = JSON.parse(msg)
+    var geolocation = mongoose.model('geolocation')
+    geolocation.findOneAndUpdate({ idOrder: data.order }, { idOrder: data.order, idDeliveryMan: data.delivery, lat: data.latitude, long: data.longitude }, function (err) {
+      if (err) console.log(err)
+      else {
+        socket.in(data.order).emit('newLocation', data)
+      }
+    })
+  })
+
+  socket.on('getPosition', function (msg) {
+    var data = JSON.parse(msg)
+    var geolocation = mongoose.model('geolocation')
+
+    find.findPosition(geolocation, data, socket)
+  })
+})
+
+server.listen(portS, () => console.log(`Socket listening on port ${portS}`))
