@@ -21,7 +21,7 @@ dbconnect.connect(dbinfo)
 
 // Setting up the port variable
 var port = process.env.PORT || 9390
-const portS = port + 1
+const portS = 60000
 
 // setting express
 var app = express()
@@ -63,7 +63,7 @@ nsp.on('connection', function (socket) {
   socket.on('create', function (msg) {
     var data = JSON.parse(msg)
     var geolocation = mongoose.model('geolocation')
-    var location = geolocation({ idOrder: data.order, idDeliveryMan: data.delivery, lat: data.latitude, long: data.longitude })
+    var location = geolocation({ idOrder: data.order, idDeliveryMan: data.deliveryGuyId, lat: data.lat, long: data.lng })
 
     socket.join(data.order)
     location.save(function (err) {
@@ -83,7 +83,7 @@ nsp.on('connection', function (socket) {
   socket.on('position', function (msg) {
     var data = JSON.parse(msg)
     var geolocation = mongoose.model('geolocation')
-    geolocation.findOneAndUpdate({ idOrder: data.order }, { idOrder: data.order, idDeliveryMan: data.delivery, lat: data.latitude, long: data.longitude }, function (err) {
+    geolocation.findOneAndUpdate({ idOrder: data.order }, { idOrder: data.order, idDeliveryMan: data.deliveryGuyId, lat: data.lat, long: data.lng }, function (err) {
       if (err) console.log(err)
       else {
         socket.in(data.order).emit('newLocation', data)
