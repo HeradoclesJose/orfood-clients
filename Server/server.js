@@ -15,9 +15,11 @@ const find = require('./routes/geolocation.js')
 // routes
 const login = require('./routes/login.js')
 const signup = require('./routes/signup.js')
+const woocommerce = require('./routes/woocommerce.js')
 
 // Connection to Mlbas!
 dbconnect.connect(dbinfo)
+const mysql = dbconnect.connectMysql(dbinfo);
 
 // Setting up the port variable
 var port = process.env.PORT || 9390
@@ -45,6 +47,7 @@ app.use(function (req, res, next) {
 // giving express access to routes
 login(app)
 signup(app)
+woocommerce(app,mysql)
 
 // start the server
 app.listen(app.get('port'), function () {
