@@ -15,13 +15,15 @@ const find = require('./routes/geolocation.js')
 // routes
 const login = require('./routes/login.js')
 const signup = require('./routes/signup.js')
+const woocommerce = require('./routes/woocommerce.js')
 
 // Connection to Mlbas!
 dbconnect.connect(dbinfo)
+const mysql = dbconnect.connectMysql(dbinfo);
 
 // Setting up the port variable
 var port = process.env.PORT || 9390
-const portS = port + 1
+const portS = 60000
 
 // setting express
 var app = express()
@@ -45,6 +47,7 @@ app.use(function (req, res, next) {
 // giving express access to routes
 login(app)
 signup(app)
+woocommerce(app,mysql)
 
 // start the server
 app.listen(app.get('port'), function () {
@@ -64,7 +67,7 @@ nsp.on('connection', function (socket) {
     var data = JSON.parse(msg)
 	console.log(data);
     var geolocation = mongoose.model('geolocation')
-    var location = geolocation({ idOrder: data.order, idDeliveryMan: data.delivery, lat: data.latitude, long: data.longitude })
+    var location = geolocation({ idOrder: data.order, idDeliveryMan: data.deliveryGuyId, lat: data.lat, long: data.lng })
 
     socket.join(data.order)
     location.save(function (err) {
@@ -85,7 +88,7 @@ nsp.on('connection', function (socket) {
 	console.log(msg);
     var data = JSON.parse(msg)
     var geolocation = mongoose.model('geolocation')
-    geolocation.findOneAndUpdate({ idOrder: data.order }, { idOrder: data.order, idDeliveryMan: data.delivery, lat: data.latitude, long: data.longitude }, function (err) {
+    geolocation.findOneAndUpdate({ idOrder: data.order }, { idOrder: data.order, idDeliveryMan: data.deliveryGuyId, lat: data.lat, long: data.lng }, function (err) {
       if (err) console.log(err)
       else {
         socket.in(data.order).emit('newLocation', data)

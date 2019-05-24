@@ -3,7 +3,6 @@ const mongoose = require('mongoose')
 const models = require('../schemas/users.js')
 const hash = require('../auth/hashpass')
 const jwt = require('../auth/jwtmodule')
-
 // Giving express access to route.
 
 module.exports = function (app) {

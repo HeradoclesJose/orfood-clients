@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mysql = require('mysql')
 
 module.exports = {
   connect: (dbinfo) => {
@@ -14,5 +15,25 @@ module.exports = {
     db.once('open', function () {
       console.log('Connected to MongoAtlas!')
     })
+  },
+  connectMysql:(dbinfo) =>{
+    let options ={
+      'user':dbinfo.db.mysqlUser,
+      'password':dbinfo.db.mysqlPassword,
+      'database':dbinfo.db.mysqlDatabase,
+      'host':dbinfo.db.mysqlHost,
+      'port':dbinfo.db.mysqlPort
+    }
+
+    const connection = mysql.createConnection(options)
+    connection.connect(err => {
+      if (err) {
+        console.error('Error connecting to Mysql Database')
+        throw err
+      }
+    })
+    console.log('Connected to WordpressDB')
+    return connection;
+
   }
 }

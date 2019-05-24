@@ -1,6 +1,11 @@
 {
   "db": {
-    "url": "mongodb://catechdev:masterkey@cluster0-shard-00-00-slpfd.mongodb.net:27017,cluster0-shard-00-01-slpfd.mongodb.net:27017,cluster0-shard-00-02-slpfd.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true"
+    "url": "mongodb://catechdev:masterkey@cluster0-shard-00-00-slpfd.mongodb.net:27017,cluster0-shard-00-01-slpfd.mongodb.net:27017,cluster0-shard-00-02-slpfd.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true",
+    "mysqlUser":"dbo780869895",
+    "mysqlPassword":"JAPCGxiCdbyghhbFiKsp",
+    "mysqlDatabase":"db780869895",
+    "mysqlHost":"db780869895.hosting-data.io",
+    "mysqlPort":"3306"
   },
 
   "hashpassword": {
