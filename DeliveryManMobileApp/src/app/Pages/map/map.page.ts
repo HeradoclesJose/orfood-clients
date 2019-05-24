@@ -26,6 +26,7 @@ import {
 // Services
 import { MapsService } from '../../Services/maps/maps.service';
 import { SocketService } from '../../Services/socket/socket.service';
+import { DeliveryStatusService } from '../../Services/delivery-status/delivery-status.service';
 
 // Models
 import { SocketData } from '../../Interfaces/socket-data';
@@ -46,6 +47,7 @@ export class MapPage implements OnInit {
     private markersAndRouteDisplayed: boolean = false;
     private locationUpdateInterval: any = null;
     private lastTimeStamp: number = null; // To prevent sending the same location more than twice
+    private updateLocationFrequenzy: number = 10000; // Milliseconds it will take to make a new location update
 
     constructor(
         private geolocation: Geolocation,
@@ -58,7 +60,8 @@ export class MapPage implements OnInit {
         private zone: NgZone,
         private socket: SocketService,
         private platform: Platform,
-        private backgroundGeolocation: BackgroundGeolocation
+        private backgroundGeolocation: BackgroundGeolocation,
+        private deliveryStatus: DeliveryStatusService
         ) {}
 
     ngOnInit() {
@@ -74,6 +77,8 @@ export class MapPage implements OnInit {
 
     ionViewWillLeave() {
         clearInterval(this.locationUpdateInterval);
+        this.socket.disconnect();
+        this.backgroundGeolocation.stop();
     }
 
     getMarkersPosition() {
@@ -155,8 +160,16 @@ export class MapPage implements OnInit {
 
         map.one( GoogleMapsEvent.MAP_READY ).then( ( data: any ) => {
             this.loading = false;
+            // Start socket connection
+            const initData: SocketData = {
+                order: this.clientData.deliveryId,
+                delivery: this.clientData.deliveryGuyId, // Delivery guy id
+                latitude: this.myLocation.lat,
+                longitude: this.myLocation.lng
+            };
+            console.log('here', initData);
+            this.socket.connect(initData); // Hardcoded id
             // Start watching position
-            this.socket.connect('1'); // Hardcoded id
             this.watchUserPosition(map);
             // this.startPolylineInterval(map);
 
@@ -190,8 +203,8 @@ export class MapPage implements OnInit {
 
             const markerOptions: MarkerOptions = {
                 position: this.myLocation,
-                icon: 'assets/images/marker.png',
-                title: 'Me'
+                icon: 'assets/images/carIcon.png',
+                title: 'Yo'
             };
 
             map.addMarker( markerOptions )
@@ -203,7 +216,7 @@ export class MapPage implements OnInit {
             const markerOptions2: MarkerOptions = {
                 position: this.clientLocation,
                 icon: 'assets/images/marker.png',
-                title: 'Client'
+                title: 'Cliente'
             };
 
             map.addMarker( markerOptions2 );
@@ -226,12 +239,13 @@ export class MapPage implements OnInit {
                         console.log('new location', this.myLocation);
 
                         const socketData: SocketData = {
-                            id: '1',
-                            lat: latitude,
-                            lng: longitude
+                            order: this.clientData.deliveryId,
+                            delivery: this.clientData.deliveryGuyId, // Delivery guy id
+                            latitude,
+                            longitude
                         };
 
-                        this.socket.send(socketData);
+                        this.socket.send('position', socketData);
                         if (this.marker) {
                             const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
                             const destinationString: string = this.clientLocation.lat.toString() + ',' + this.clientLocation.lng;
@@ -246,7 +260,7 @@ export class MapPage implements OnInit {
                 .catch((error) => {
                     console.log('Interval current position error:', error);
                 });
-        }, 10000);
+        }, this.updateLocationFrequenzy);
     }
 
     backgroundGeolocationInit() {
@@ -256,7 +270,7 @@ export class MapPage implements OnInit {
             stationaryRadius: 1,
             distanceFilter: 30,
             interval: 10000,
-            debug: true, //  enable this hear sounds for background-geolocation life-cycle.
+            debug: false, //  enable this hear sounds for background-geolocation life-cycle.
             stopOnTerminate: true, // enable this to clear background location settings when the app terminates
         };
 
@@ -268,11 +282,12 @@ export class MapPage implements OnInit {
                     const { latitude, longitude } = location;
                     this.myLocation = new LatLng(latitude, longitude);
                     const msg: SocketData = {
-                        id: '1',
-                        lat: latitude,
-                        lng: longitude
+                        order: this.clientData.deliveryId,
+                        delivery: this.clientData.deliveryGuyId, // Delivery guy id
+                        latitude,
+                        longitude
                     };
-                    this.socket.send(msg);
+                    this.socket.send('position', msg);
                 });
 
             });
@@ -313,13 +328,29 @@ export class MapPage implements OnInit {
                         text: 'Confirmar',
                         handler: () => {
                             this.zone.run(() => {
-                                this.navCtrl.navigateRoot('/home');
+                                const updateData = {
+                                    orderId: this.clientData.deliveryId,
+                                    wsStatus: 'finished'
+                                };
+                                this.deliveryStatus.updateStatus(updateData)
+                                    .then(() => {
+                                        this.navCtrl.navigateRoot('/home');
+                                    });
                             });
                         }
                     }
                 ]
             });
             await alert.present();
+        } else {
+            const updateData = {
+                orderId: this.clientData.deliveryId,
+                wsStatus: 'finished'
+            };
+            this.deliveryStatus.updateStatus(updateData)
+                .then(() => {
+                    this.navCtrl.navigateRoot('/home');
+                });
         }
     }
 

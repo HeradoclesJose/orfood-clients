@@ -62,6 +62,7 @@ const nsp = io.of('/geolocationOrfood')
 nsp.on('connection', function (socket) {
   socket.on('create', function (msg) {
     var data = JSON.parse(msg)
+	console.log(data);
     var geolocation = mongoose.model('geolocation')
     var location = geolocation({ idOrder: data.order, idDeliveryMan: data.delivery, lat: data.latitude, long: data.longitude })
 
@@ -81,6 +82,7 @@ nsp.on('connection', function (socket) {
   })
 
   socket.on('position', function (msg) {
+	console.log(msg);
     var data = JSON.parse(msg)
     var geolocation = mongoose.model('geolocation')
     geolocation.findOneAndUpdate({ idOrder: data.order }, { idOrder: data.order, idDeliveryMan: data.delivery, lat: data.latitude, long: data.longitude }, function (err) {

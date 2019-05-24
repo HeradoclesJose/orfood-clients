@@ -41,8 +41,8 @@ export class MapsService {
                     map.addPolyline({
                         points: Encoding.decodePath(routeDrawing.points),
                         geodesic: true,
-                        color: '#000',
-                        width: 2
+                        color: '#d75300',
+                        width: 2.5
                     }).then((polyline: any) => {
                         this.polyline = polyline;
                         resolve(json);
@@ -74,8 +74,8 @@ export class MapsService {
                     map.addPolyline({
                         points: Encoding.decodePath(routeDrawing.points),
                         geodesic: true,
-                        color: '#000',
-                        width: 2
+                        color: '#d75300',
+                        width: 2.5
                     }).then((polyline: any) => {
                         this.polyline = polyline;
                         resolve();

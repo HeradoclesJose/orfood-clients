@@ -5,6 +5,13 @@ import { NavigationExtras } from '@angular/router';
 // Providers
 import {QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 
+// Services
+import { JwtDecoderService } from '../../Services/jwt-decoder/jwt-decoder.service';
+import { DeliveryStatusService } from '../../Services/delivery-status/delivery-status.service';
+
+// Models
+import { OrderStatusData } from '../../Interfaces/order-status-data';
+
 @Component({
   selector: 'app-qr-scanner',
   templateUrl: './qr-scanner.page.html',
@@ -17,7 +24,9 @@ export class QrScannerPage implements OnInit {
       private navCtrl: NavController,
       private qrScanner: QRScanner,
       private zone: NgZone,
-      private alertCtrl: AlertController) { }
+      private alertCtrl: AlertController,
+      private jwtDecoder: JwtDecoderService,
+      private deliveryStatus: DeliveryStatusService) { }
 
   ngOnInit() {
       this.qrScanner.prepare()
@@ -39,18 +48,40 @@ export class QrScannerPage implements OnInit {
                       }
                       if (QRJson) {
                           // Gotta check it's a json with the structure I want
-                          const navigationExtras: NavigationExtras = {
-                              queryParams: {
-                                  deliveryId: QRJson.deliverId,
-                                  name: QRJson.name,
-                                  phone: QRJson.phone,
-                                  direction: QRJson.direction
-                              }
-                          };
-                          console.log('json', navigationExtras);
-                          this.zone.run(() => {
-                              this.navCtrl.navigateForward(['/map'], navigationExtras); // Redirect to map
-                          });
+                          this.jwtDecoder.getBody()
+                              .then((body) => {
+                                  console.log(body);
+                                  const navigationExtras: NavigationExtras = {
+                                      queryParams: {
+                                          deliveryId: QRJson.deliveryId,
+                                          name: QRJson.name,
+                                          phone: QRJson.phone,
+                                          direction: QRJson.direction,
+                                          deliveryGuyId: body.sub
+                                      }
+                                  };
+                                  console.log('json', navigationExtras);
+                                  const updateData: OrderStatusData = {
+                                      orderId: QRJson.deliveryId,
+                                      wsStatus: 'sending'
+                                  };
+                                  this.deliveryStatus.updateStatus(updateData)
+                                      .then(() => {
+                                          this.zone.run(() => {
+                                              this.navCtrl.navigateForward(['/map'], navigationExtras); // Redirect to map
+                                          });
+                                      })
+                                      .catch(() => {
+                                          this.zone.run(() => {
+                                              this.navCtrl.navigateForward(''); // Update was not possible
+                                          });
+                                      });
+                              })
+                              .catch(() => {
+                                  this.zone.run(() => {
+                                      this.navCtrl.navigateForward(''); // Token was not founded... or other thing...
+                                  });
+                              });
                       } else {
                           const alert: any = await this.alertCtrl.create({
                               header: 'El código escaneado no es un pedido',
