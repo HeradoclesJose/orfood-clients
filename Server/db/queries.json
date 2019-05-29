@@ -1,8 +1,8 @@
 {
-    "wordpress_prefix_production":"oEubGYss",
+    "wordpress_prefix_production":"wp_",
     "woocommerce":{
-        "select":"SELECT ID, post_author, post_date, post_date_gmt, post_content, post_title, post_excerpt, post_status, comment_status, ping_status, post_password, post_name, to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, post_parent, guid, menu_order, post_type, post_mime_type, comment_count FROM db780869895.oEubGYssposts WHERE ID=?;",
-        "update":"UPDATE db780869895.oEubGYssposts SET post_status=?, post_modified=?, post_modified_gmt=? WHERE ID=?;"
+        "select":"SELECT ID, post_author, post_date, post_date_gmt, post_content, post_title, post_excerpt, post_status, comment_status, ping_status, post_password, post_name, to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, post_parent, guid, menu_order, post_type, post_mime_type, comment_count FROM 165_22_186_58.wp_posts WHERE ID=?;",
+        "update":"UPDATE 165_22_186_58.wp_posts SET post_status=?, post_modified=?, post_modified_gmt=? WHERE ID=?;"
         
         
     }

@@ -22,7 +22,7 @@ dbconnect.connect(dbinfo)
 const mysql = dbconnect.connectMysql(dbinfo);
 
 // Setting up the port variable
-var port = process.env.PORT || 9390
+var port = 12000
 const portS = 60000
 
 // setting express
