@@ -10,8 +10,6 @@ module.exports = function (app) {
     var users = mongoose.model('users')
     var token = ''
 
-    console.log(req.body.user + ' is trying to sign in')
-
     // We make a query to check if the data is right, then we send (or not) the token.
     users.countDocuments({ user: req.body.user, pass: hash.hashPassword(req.body.password) }, function (_err, count) {
       if (count === 1) {
