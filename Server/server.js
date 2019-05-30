@@ -19,7 +19,7 @@ const woocommerce = require('./routes/woocommerce.js')
 
 // Connection to Mlbas!
 dbconnect.connect(dbinfo)
-const mysql = dbconnect.connectMysql(dbinfo);
+const mysql = dbconnect.connectMysql(dbinfo)
 
 // Setting up the port variable
 var port = 12000
@@ -47,7 +47,7 @@ app.use(function (req, res, next) {
 // giving express access to routes
 login(app)
 signup(app)
-woocommerce(app,mysql)
+woocommerce(app, mysql)
 
 // start the server
 app.listen(app.get('port'), function () {
@@ -65,7 +65,6 @@ const nsp = io.of('/geolocationOrfood')
 nsp.on('connection', function (socket) {
   socket.on('create', function (msg) {
     var data = JSON.parse(msg)
-	console.log(data);
     var geolocation = mongoose.model('geolocation')
     var location = geolocation({ idOrder: data.order, idDeliveryMan: data.deliveryGuyId, lat: data.lat, long: data.lng })
 
@@ -85,11 +84,13 @@ nsp.on('connection', function (socket) {
   })
 
   socket.on('position', function (msg) {
-	console.log(msg);
     var data = JSON.parse(msg)
     var geolocation = mongoose.model('geolocation')
     geolocation.findOneAndUpdate({ idOrder: data.order }, { idOrder: data.order, idDeliveryMan: data.deliveryGuyId, lat: data.lat, long: data.lng }, function (err) {
-      if (err) console.log(err)
+      if (err) {
+        console.log(err)
+        socket.in(data.order).emit('newLocation', data)
+      }
       else {
         socket.in(data.order).emit('newLocation', data)
       }
