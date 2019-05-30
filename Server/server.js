@@ -90,8 +90,7 @@ nsp.on('connection', function (socket) {
       if (err) {
         console.log(err)
         socket.in(data.order).emit('newLocation', data)
-      }
-      else {
+      } else {
         socket.in(data.order).emit('newLocation', data)
       }
     })
