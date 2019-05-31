@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core'
 import {NavController, AlertController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 
-
 // Providers
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { CallNumber } from '@ionic-native/call-number/ngx';
@@ -22,7 +21,6 @@ import {
     BackgroundGeolocationEvents
 } from '@ionic-native/background-geolocation/ngx';
 
-
 // Services
 import { MapsService } from '../../Services/maps/maps.service';
 import { SocketService } from '../../Services/socket/socket.service';
@@ -30,6 +28,7 @@ import { DeliveryStatusService } from '../../Services/delivery-status/delivery-s
 
 // Models
 import { SocketData } from '../../Interfaces/socket-data';
+import { OrderStatusData } from '../../Interfaces/order-status-data';
 
 @Component({
   selector: 'app-map',
@@ -41,6 +40,7 @@ export class MapPage implements OnInit {
     private minDistanceBetweenOriginAndDestination: number = 0.2;
     private myLocation: LatLng;
     private clientLocation; LatLng;
+    private map: any;
     private marker: Marker;
     private loading: boolean = true;
     private clientData: any = null; // Gotta define this stucture
@@ -156,28 +156,28 @@ export class MapPage implements OnInit {
                 zoom: 18
             }
         };
-        const map = GoogleMaps.create('map', mapOptions); // Seems like the parameter is the id
+        this.map = GoogleMaps.create('map', mapOptions); // Seems like the parameter is the id
 
-        map.one( GoogleMapsEvent.MAP_READY ).then( ( data: any ) => {
+        this.map.one( GoogleMapsEvent.MAP_READY ).then( ( data: any ) => {
             this.loading = false;
             // Start socket connection
             const initData: SocketData = {
                 order: this.clientData.deliveryId,
-                delivery: this.clientData.deliveryGuyId, // Delivery guy id
-                latitude: this.myLocation.lat,
-                longitude: this.myLocation.lng
+                deliveryGuyId: this.clientData.deliveryGuyId, // Delivery guy id
+                lat: this.myLocation.lat,
+                lng: this.myLocation.lng
             };
             console.log('here', initData);
             this.socket.connect(initData); // Hardcoded id
             // Start watching position
-            this.watchUserPosition(map);
+            this.watchUserPosition();
             // this.startPolylineInterval(map);
 
             // In order to be used in the google API Request
             const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
             const destinationString: string = this.clientLocation.lat.toString() + ',' + this.clientLocation.lng;
 
-            this.mapsService.getBoundariesAndDrawInitialPolyline(map, originString, destinationString)
+            this.mapsService.getBoundariesAndDrawInitialPolyline(this.map, originString, destinationString)
                 .then((googleResponse: any) => {
                     const boundsOfRoute: Array<LatLng> = [];
                     boundsOfRoute.push(googleResponse.routes[0].bounds.northeast);
@@ -192,7 +192,7 @@ export class MapPage implements OnInit {
                     boundsOfRoute[1].lng -= offSetValue;
 
                     // Set Camera too look the route
-                    map.animateCamera({
+                    this.map.animateCamera({
                         target: boundsOfRoute,
                         duration: 2000
                     })
@@ -204,10 +204,10 @@ export class MapPage implements OnInit {
             const markerOptions: MarkerOptions = {
                 position: this.myLocation,
                 icon: 'assets/images/carIcon.png',
-                title: 'Yo'
+                title: 'Tu ubicación'
             };
 
-            map.addMarker( markerOptions )
+            this.map.addMarker( markerOptions )
                 .then( ( marker: Marker ) => {
                     this.marker = marker;
                     console.log('inside', marker);
@@ -219,14 +219,14 @@ export class MapPage implements OnInit {
                 title: 'Cliente'
             };
 
-            map.addMarker( markerOptions2 );
+            this.map.addMarker( markerOptions2 );
         })
         .catch((error) => {
            console.log(error);
         });
     }
 
-    watchUserPosition(map: any): void {
+    watchUserPosition(): void {
         this.locationUpdateInterval  = setInterval(() => {
             console.log('se ejecuta el intervalo');
             this.geolocation.getCurrentPosition()
@@ -237,19 +237,18 @@ export class MapPage implements OnInit {
                         const {latitude, longitude} = position.coords;
                         this.myLocation = new LatLng(latitude, longitude);
                         console.log('new location', this.myLocation);
-
                         const socketData: SocketData = {
                             order: this.clientData.deliveryId,
-                            delivery: this.clientData.deliveryGuyId, // Delivery guy id
-                            latitude,
-                            longitude
+                            deliveryGuyId: this.clientData.deliveryGuyId, // Delivery guy id
+                            lat: latitude,
+                            lng: longitude
                         };
 
                         this.socket.send('position', socketData);
                         if (this.marker) {
                             const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
                             const destinationString: string = this.clientLocation.lat.toString() + ',' + this.clientLocation.lng;
-                            this.mapsService.drawPolyline(map, originString, destinationString)
+                            this.mapsService.drawPolyline(this.map, originString, destinationString)
                                 .catch((error) => {
                                     console.log(error);
                                 });
@@ -270,6 +269,8 @@ export class MapPage implements OnInit {
             stationaryRadius: 1,
             distanceFilter: 30,
             interval: 10000,
+            notificationTitle: 'Orfood',
+            notificationText: 'Aplicación en segundo plano',
             debug: false, //  enable this hear sounds for background-geolocation life-cycle.
             stopOnTerminate: true, // enable this to clear background location settings when the app terminates
         };
@@ -278,16 +279,18 @@ export class MapPage implements OnInit {
             .then(() => {
 
                 this.backgroundGeolocation.on(BackgroundGeolocationEvents.location).subscribe((location: BackgroundGeolocationResponse) => {
-                    console.log(location);
-                    const { latitude, longitude } = location;
-                    this.myLocation = new LatLng(latitude, longitude);
-                    const msg: SocketData = {
-                        order: this.clientData.deliveryId,
-                        delivery: this.clientData.deliveryGuyId, // Delivery guy id
-                        latitude,
-                        longitude
-                    };
-                    this.socket.send('position', msg);
+                    //if (location.time !== this.lastTimeStamp) {
+                        this.lastTimeStamp = location.time;
+                        const {latitude, longitude} = location;
+                        this.myLocation = new LatLng(latitude, longitude);
+                        const msg: SocketData = {
+                            order: this.clientData.deliveryId,
+                            deliveryGuyId: this.clientData.deliveryGuyId, // Delivery guy id
+                            lat: latitude,
+                            lng: longitude
+                        };
+                        this.socket.send('position', msg);
+                    // }
                 });
 
             });
@@ -328,9 +331,9 @@ export class MapPage implements OnInit {
                         text: 'Confirmar',
                         handler: () => {
                             this.zone.run(() => {
-                                const updateData = {
+                                const updateData: OrderStatusData = {
                                     orderId: this.clientData.deliveryId,
-                                    wsStatus: 'finished'
+                                    wcStatus: 'finished'
                                 };
                                 this.deliveryStatus.updateStatus(updateData)
                                     .then(() => {
@@ -343,15 +346,22 @@ export class MapPage implements OnInit {
             });
             await alert.present();
         } else {
-            const updateData = {
+            const updateData: OrderStatusData = {
                 orderId: this.clientData.deliveryId,
-                wsStatus: 'finished'
+                wcStatus: 'finished'
             };
             this.deliveryStatus.updateStatus(updateData)
                 .then(() => {
                     this.navCtrl.navigateRoot('/home');
                 });
         }
+    }
+
+    locateMe() {
+        this.map.animateCamera({
+            target: this.myLocation,
+            duration: 2000
+        });
     }
 
     call() {

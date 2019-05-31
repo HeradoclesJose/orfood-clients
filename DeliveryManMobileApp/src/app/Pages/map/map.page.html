@@ -11,5 +11,6 @@
   <div class="call-button" (click)="call()" shape="round">
     <ion-icon name="ios-call"></ion-icon>
   </div>
+  <ion-button *ngIf="markersAndRouteDisplayed" class="locate-button" (click)="locateMe()"><ion-icon name="locate"></ion-icon></ion-button>
   <ion-button *ngIf="markersAndRouteDisplayed" class="finish-button" (click)="finishDelivery()">Finalizar pedido</ion-button>
 </ion-content>

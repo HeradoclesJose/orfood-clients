@@ -1,6 +1,6 @@
 export interface SocketData {
     order: string;
-    delivery: string;
-    latitude: number;
-    longitude: number;
+    deliveryGuyId: string;
+    lat: number;
+    lng: number;
 }

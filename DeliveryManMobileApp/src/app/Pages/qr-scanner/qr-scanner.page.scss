@@ -6,14 +6,21 @@ ion-content {
   position: absolute;
   width: 38vh;
   height: 38vh;
-  left: 9.5vh;
+  left: 0;
+  right: 0;
+  margin-right: auto;
+  margin-left: auto;
   top: 23vh;
   background-color: transparent;
   border: solid 2px rgba(150,150,150,0.5);
 }
 
 .close-button {
+  width: 35vw;
   position: absolute;
-  top: 83vh;
-  left: 19vh;
+  left: 0;
+  right: 0;
+  bottom: 6vh;
+  margin-left: auto;
+  margin-right: auto;
 }
