@@ -19,7 +19,6 @@ import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { BackgroundGeolocation } from '@ionic-native/background-geolocation/ngx';
 
-
 // Modules
 import { IonicStorageModule } from '@ionic/storage';
 

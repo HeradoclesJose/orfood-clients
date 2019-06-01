@@ -1,17 +1,23 @@
 .logout-icon {
   position: absolute;
   right: 7vw;
-  top: 3vh;
+  top: 20px;
   font-size: 1.6em;
 }
 
 .info {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   flex-direction: column;
   height: 100%;
 }
 
-.qrcode-image {
+.instructions {
+  font-size: 130%;
+  text-align: justify;
+}
 
+.qrcode-image {
+  max-width: 34vh;
+  margin: 0 auto;
 }

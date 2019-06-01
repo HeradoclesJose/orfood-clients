@@ -63,7 +63,7 @@ export class QrScannerPage implements OnInit {
                                   console.log('json', navigationExtras);
                                   const updateData: OrderStatusData = {
                                       orderId: QRJson.deliveryId,
-                                      wsStatus: 'sending'
+                                      wcStatus: 'sending'
                                   };
                                   this.deliveryStatus.updateStatus(updateData)
                                       .then(() => {

@@ -5,15 +5,15 @@ import { HTTP } from '@ionic-native/http/ngx';
 import { Storage } from '@ionic/storage';
 
 // Models
-import { BASE_URL } from '../../API/BaseUrl';
+import { BASE_URL, MAIN_PORT } from '../../API/BaseUrl';
 import { ServerResponse } from '../../Interfaces/server-response';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private loginUrl: string = BASE_URL + '/login'; // replace with login url
-  private signUpUrl: string = BASE_URL + '/signup';
+  private loginUrl: string = BASE_URL + MAIN_PORT + '/login'; // replace with login url
+  private signUpUrl: string = BASE_URL + MAIN_PORT + '/signup';
 
   constructor(private http: HTTP, private storage: Storage) { }
 
@@ -43,7 +43,7 @@ export class AuthService {
         });
   }
 
- /* tokenTest() {
+  tokenTest() {
       return new Promise((resolve) => {
           this.storage.get('token')
               .then((token) => {
@@ -60,5 +60,5 @@ export class AuthService {
                       });
               });
       });
-  }*/
+  }
 }
