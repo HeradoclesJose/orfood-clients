@@ -19,13 +19,15 @@ const woocommerce = require('./routes/woocommerce.js')
 
 // Connection to Mlbas!
 dbconnect.connect(dbinfo)
-const mysql = dbconnect.connectMysql(dbinfo);
-//Keep Alive
-setInterval(()=>{ mysql.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-  if (error) throw error;
-  console.log('----> KEEP ALIVE...The solution is: ', results[0].solution);
-}); }, 1500000);
+const mysql = dbconnect.connectMysql(dbinfo)
 
+// Keep Alive
+setInterval(() => {
+  mysql.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+    if (error) throw error
+    console.log('----> KEEP ALIVE...The solution is: ', results[0].solution)
+  })
+}, 1500000)
 
 // Setting up the port variable
 var port = 12000
