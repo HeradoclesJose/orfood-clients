@@ -8,7 +8,7 @@ $(document).ready(function () {
     const token = storage.getItem('ot');
     if (!token) {
         alert('Sesión no iniciada');
-        window.location.href = "http://www.w3schools.com";
+        window.location.href = "http://165.22.186.58:12000/index.html";
     }
 
     $('#sign-up-form').submit( (e) => {
