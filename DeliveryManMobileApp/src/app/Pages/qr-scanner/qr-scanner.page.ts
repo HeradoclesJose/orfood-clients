@@ -73,7 +73,7 @@ export class QrScannerPage implements OnInit {
                                       })
                                       .catch(() => {
                                           this.zone.run(() => {
-                                              this.navCtrl.navigateForward(''); // Update was not possible
+                                              this.navCtrl.navigateForward('/home'); // Update was not possible
                                           });
                                       });
                               })

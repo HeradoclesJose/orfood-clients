@@ -18,6 +18,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { BackgroundGeolocation } from '@ionic-native/background-geolocation/ngx';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+
 
 // Modules
 import { IonicStorageModule } from '@ionic/storage';
@@ -37,6 +39,7 @@ import { IonicStorageModule } from '@ionic/storage';
     NativeGeocoder,
     CallNumber,
     BackgroundGeolocation,
+    Diagnostic,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

@@ -48,6 +48,7 @@ export class MapPage implements OnInit {
     private locationUpdateInterval: any = null;
     private lastTimeStamp: number = null; // To prevent sending the same location more than twice
     private updateLocationFrequenzy: number = 10000; // Milliseconds it will take to make a new location update
+    private subscription: any = null;
 
     constructor(
         private geolocation: Geolocation,
@@ -75,10 +76,19 @@ export class MapPage implements OnInit {
             });
     }
 
+    ionViewDidEnter() {
+        this.subscription = this.platform.backButton.subscribe(() => {
+            // I should ask first
+            this.navCtrl.navigateBack('/home');
+        });
+    }
+
     ionViewWillLeave() {
         clearInterval(this.locationUpdateInterval);
         this.socket.disconnect();
         this.backgroundGeolocation.stop();
+        this.subscription.unsubscribe();
+
     }
 
     getMarkersPosition() {
@@ -199,7 +209,11 @@ export class MapPage implements OnInit {
                         .then(() => {
                          this.markersAndRouteDisplayed = true;
                         });
-                });
+                })
+                .catch((err) => {
+                    console.log('error', err);
+                    this.markersAndRouteDisplayed = true;
+                })
 
             const markerOptions: MarkerOptions = {
                 position: this.myLocation,

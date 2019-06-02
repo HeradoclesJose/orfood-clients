@@ -4,6 +4,8 @@ import { NavController, AlertController, Platform } from '@ionic/angular';
 
 // Providers
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+
 
 
 // Services
@@ -21,7 +23,8 @@ export class HomePage {
       private navCtrl: NavController,
       private alertCtrl: AlertController,
       private androidPermissions: AndroidPermissions,
-      private platform: Platform
+      private platform: Platform,
+      private diagnostic: Diagnostic
   ) {}
 
   scanCode() {
@@ -46,7 +49,6 @@ export class HomePage {
                 if (!data.hasPermission) {
                     permissionToAskFor.push(this.androidPermissions.PERMISSION.CAMERA);
                 }
-                console.log('here', this.androidPermissions.PERMISSION);
                 this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION)
                     .then((data2: any) => {
                         console.log(data2);
@@ -57,16 +59,61 @@ export class HomePage {
                             this.androidPermissions.requestPermissions(permissionToAskFor)
                                 .then((permissionsData: any) => {
                                     console.log(permissionsData);
-                                    resolve(permissionsData.hasPermission);
+                                    if (permissionsData.hasPermission) {
+                                        // Lets check if gps is enabled
+                                        this.diagnostic.isLocationEnabled()
+                                            .then((isEnabled: boolean) => {
+                                                if (isEnabled) {
+                                                    resolve(true);
+                                                } else {
+                                                    resolve(false);
+                                                    this.alertEnableYourLocation();
+                                                }
+                                            });
+                                    } else {
+                                        resolve(false);
+                                    }
                                 })
                                 .catch(() => resolve(false)); // Gotta add an alert
                         } else {
-                            resolve(true);
+                            this.diagnostic.isLocationEnabled()
+                                .then((isEnabled: boolean) => {
+                                    if (isEnabled) {
+                                        resolve(true);
+                                    } else {
+                                        resolve(false);
+                                        this.alertEnableYourLocation();
+                                    }
+                                });
                         }
                     });
               });
       });
   }
+
+  async alertEnableYourLocation() {
+      const locationAlert: any = await this.alertCtrl.create({
+          header: '¡Vaya!...',
+          subHeader: 'Parece que su úbicación esta desactivada, necesitamos que la actives para poder trabajar',
+          buttons: [
+              {
+                  text: 'Cancelar',
+                  role: 'cancel',
+                  cssClass: 'alertCtrl',
+                  handler: () => {
+                      console.log('Cancelado');
+                  }
+              },
+              {
+                  text: 'Ok',
+                  handler: () => {
+                      this.diagnostic.switchToLocationSettings();
+                  }
+              }
+          ]
+      });
+      await locationAlert.present();
+    }
 
   async logout() {
     const logoutAlert: any = await this.alertCtrl.create({

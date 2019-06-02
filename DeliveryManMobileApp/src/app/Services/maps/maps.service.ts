@@ -19,7 +19,7 @@ export class MapsService {
     constructor(private http: HTTP) { }
 
     getBoundariesAndDrawInitialPolyline(map: any, origin: string, destination: string) {
-        return new Promise((resolve) => {
+        return new Promise((res, rej) => {
             // Set te points
             let url = this.baseUrl + '?origin=' + origin + '&destination=' + destination;
             // Set the key
@@ -33,20 +33,28 @@ export class MapsService {
                 .then((data: any) => {
                     const json: any = JSON.parse(data.data);
                     console.log(json);
-                    const routeDrawing = json.routes[0].overview_polyline;
-                    console.log(this.polyline);
-                    if (this.polyline !== null) {
-                        this.polyline.remove();
+                    if (json.routes.length > 0) {
+                        const routeDrawing = json.routes[0].overview_polyline;
+                        console.log(this.polyline);
+                        if (this.polyline !== null) {
+                            this.polyline.remove();
+                        }
+                        map.addPolyline({
+                            points: Encoding.decodePath(routeDrawing.points),
+                            geodesic: true,
+                            color: '#d75300',
+                            width: 2.5
+                        })
+                            .then((polyline: any) => {
+                                this.polyline = polyline;
+                                res(json);
+                            })
+                            .catch((err) => {
+                                rej(err);
+                            });
+                    } else {
+                        rej('No routes');
                     }
-                    map.addPolyline({
-                        points: Encoding.decodePath(routeDrawing.points),
-                        geodesic: true,
-                        color: '#d75300',
-                        width: 2.5
-                    }).then((polyline: any) => {
-                        this.polyline = polyline;
-                        resolve(json);
-                    });
                 });
         });
     }

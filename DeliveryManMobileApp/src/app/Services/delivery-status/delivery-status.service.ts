@@ -16,7 +16,7 @@ export class DeliveryStatusService {
   constructor(private http: HTTP, private storage: Storage) { }
 
   updateStatus(updateData: any) {
-    return new Promise((resolve) => {
+    return new Promise((res, rej) => {
         this.storage.get('token')
             .then((token) => {
                 const headers: any = {
@@ -24,7 +24,10 @@ export class DeliveryStatusService {
                 };
                 this.http.post(this.url, updateData, headers)
                     .then((data) => {
-                        resolve(data);
+                        res(data);
+                    })
+                    .catch((err) => {
+                        rej(err);
                     });
             });
     });

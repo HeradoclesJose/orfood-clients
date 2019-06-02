@@ -24,6 +24,7 @@
     "@ionic-native/background-geolocation": "^5.6.0",
     "@ionic-native/call-number": "^5.6.0",
     "@ionic-native/core": "^5.6.0",
+    "@ionic-native/diagnostic": "^5.6.1",
     "@ionic-native/geolocation": "^5.6.0",
     "@ionic-native/google-maps": "^5.5.0",
     "@ionic-native/http": "^5.6.0",
@@ -44,6 +45,7 @@
     "cordova-plugin-nativegeocoder": "3.2.2",
     "cordova-plugin-qrscanner": "3.0.1",
     "cordova-sqlite-storage": "3.2.0",
+    "cordova.plugins.diagnostic": "4.0.12",
     "core-js": "^2.5.4",
     "rxjs": "~6.5.1",
     "socket.io-client": "^2.2.0",
@@ -114,6 +116,9 @@
         "ACCOUNT_LABEL": "@string/app_name",
         "ACCOUNT_TYPE": "$PACKAGE_NAME.account",
         "CONTENT_AUTHORITY": "$PACKAGE_NAME"
+      },
+      "cordova.plugins.diagnostic": {
+        "ANDROID_SUPPORT_VERSION": "28.+"
       }
     },
     "platforms": [

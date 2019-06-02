@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, Platform } from '@ionic/angular';
 
 // Services
 import { AuthService } from '../../Services/auth/auth.service';
@@ -12,17 +12,26 @@ import { ServerResponse } from '../../Interfaces/server-response';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
-  private loginData: {user: string, password: string} = {user: '', password: ''};
-  private loading: boolean = false;
+export class LoginPage {
+  loginData: {user: string, password: string} = {user: '', password: ''};
+  loading: boolean = false;
+  subscription: any = null
 
   constructor(
       private auth: AuthService,
       private navCtrl: NavController,
-      private alertCtrl: AlertController
+      private alertCtrl: AlertController,
+      private platform: Platform
   ) { }
 
-  ngOnInit() {
+  ionViewDidEnter() {
+      this.subscription = this.platform.backButton.subscribe(() => {
+          navigator['app'].exitApp();
+      });
+  }
+
+  ionViewWillLeave(){
+      this.subscription.unsubscribe();
   }
 
   login() {
@@ -32,6 +41,8 @@ export class LoginPage implements OnInit {
             console.log('login data', data); // Check server response to allow login
             this.loading = false;
             if (data.status === '200' && data.message === 'Inicio exitoso') {
+                this.loginData.user = '';
+                this.loginData.password = '';
                 this.navCtrl.navigateForward('/home');
             } else {
                 const alert: any = await this.alertCtrl.create({
