@@ -77,7 +77,7 @@ export class MapPage implements OnInit {
     }
 
     ionViewDidEnter() {
-        this.subscription = this.platform.backButton.subscribe(() => {
+        this.subscription = this.platform.backButton.subscribeWithPriority(0, () => {
             // I should ask first
             this.navCtrl.navigateBack('/home');
         });
@@ -213,7 +213,7 @@ export class MapPage implements OnInit {
                 .catch((err) => {
                     console.log('error', err);
                     this.markersAndRouteDisplayed = true;
-                })
+                });
 
             const markerOptions: MarkerOptions = {
                 position: this.myLocation,
