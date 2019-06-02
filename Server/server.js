@@ -25,7 +25,6 @@ const mysql = dbconnect.connectMysql(dbinfo)
 setInterval(() => {
   mysql.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
     if (error) throw error
-    console.log('----> KEEP ALIVE...The solution is: ', results[0].solution)
   })
 }, 1500000)
 
@@ -36,7 +35,7 @@ const portS = 60000
 // setting express
 var app = express()
 app.set('port', port)
-app.use('/static', express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 // The use of the bodyParser constructor (app.use(bodyParser());) has been deprecated
 // Now is a middleware, so you have to call the methods separately...
@@ -79,7 +78,7 @@ nsp.on('connection', function (socket) {
 
     socket.join(data.order)
     location.save(function (err) {
-      if (err != null) console.log(err)
+      if (err){}
     })
   })
 
