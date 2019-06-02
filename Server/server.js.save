@@ -19,15 +19,7 @@ const woocommerce = require('./routes/woocommerce.js')
 
 // Connection to Mlbas!
 dbconnect.connect(dbinfo)
-const mysql = dbconnect.connectMysql(dbinfo)
-
-// Keep Alive
-setInterval(() => {
-  mysql.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-    if (error) throw error
-    console.log('----> KEEP ALIVE...The solution is: ', results[0].solution)
-  })
-}, 1500000)
+const mysql = dbconnect.connectMysql(dbinfo);
 
 // Setting up the port variable
 var port = 12000
@@ -47,16 +39,15 @@ app.use(bodyParser.urlencoded({ limit: '15mb', extended: true, parameterLimit: 5
 // Allow CROSS-ORIGINS
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Credentials', 'true')
-  res.header('Access-Control-Allow-Methods', 'POST, GET, HEAD, PUT, DELETE, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+  res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   next()
 })
 
 // giving express access to routes
 login(app)
 signup(app)
-woocommerce(app, mysql)
+woocommerce(app,mysql)
 
 // start the server
 app.listen(app.get('port'), function () {
@@ -66,14 +57,16 @@ app.listen(app.get('port'), function () {
 // Starting socket.io for the Geolocation service
 const server = http.createServer(app)
 const io = socketIo(server)
-
+zzzzz
 // Setting up the Sockets
 
 const nsp = io.of('/geolocationOrfood')
 
 nsp.on('connection', function (socket) {
+	console.log('user connected');
   socket.on('create', function (msg) {
     var data = JSON.parse(msg)
+	console.log(data);
     var geolocation = mongoose.model('geolocation')
     var location = geolocation({ idOrder: data.order, idDeliveryMan: data.deliveryGuyId, lat: data.lat, long: data.lng })
 
@@ -93,13 +86,12 @@ nsp.on('connection', function (socket) {
   })
 
   socket.on('position', function (msg) {
+	console.log(msg);
     var data = JSON.parse(msg)
     var geolocation = mongoose.model('geolocation')
     geolocation.findOneAndUpdate({ idOrder: data.order }, { idOrder: data.order, idDeliveryMan: data.deliveryGuyId, lat: data.lat, long: data.lng }, function (err) {
-      if (err) {
-        console.log(err)
-        socket.in(data.order).emit('newLocation', data)
-      } else {
+      if (err) console.log(err)
+      else {
         socket.in(data.order).emit('newLocation', data)
       }
     })
