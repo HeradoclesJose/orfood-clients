@@ -37,18 +37,19 @@ import { OrderStatusData } from '../../Interfaces/order-status-data';
 })
 export class MapPage implements OnInit {
     @ViewChild('Map') mapElement: ElementRef;
+    private platformSubscription: any = null;
     private minDistanceBetweenOriginAndDestination: number = 0.2;
     private myLocation: LatLng;
     private clientLocation; LatLng;
     private map: any;
     private marker: Marker;
-    private loading: boolean = true;
-    private clientData: any = null; // Gotta define this stucture
-    private markersAndRouteDisplayed: boolean = false;
     private locationUpdateInterval: any = null;
     private lastTimeStamp: number = null; // To prevent sending the same location more than twice
     private updateLocationFrequenzy: number = 10000; // Milliseconds it will take to make a new location update
     private subscription: any = null;
+    loading: boolean = true;
+    clientData: any = null; // Gotta define this stucture
+    markersAndRouteDisplayed: boolean = false;
 
     constructor(
         private geolocation: Geolocation,
@@ -73,6 +74,23 @@ export class MapPage implements OnInit {
         this.getMarkersPosition()
             .then(() => {
                 this.loadMap();
+            })
+            .catch(async () => {
+                const alert: any = await this.alertCtrl.create({
+                    header: '¡Vaya!... ha ocurrido un error',
+                    message: 'No fue posible determinar tu ubicación, intenta ajustar tu gps a modo de alta presición',
+                    buttons: [
+                        {
+                            text: 'Aceptar',
+                            handler: () => {
+                                this.zone.run(() => {
+                                    this.navCtrl.navigateRoot('/home');
+                                });
+                            }
+                        }
+                    ]
+                });
+                await alert.present();
             });
     }
 
@@ -84,24 +102,28 @@ export class MapPage implements OnInit {
     }
 
     ionViewWillLeave() {
+        this.backgroundGeolocation.stop();
+        this.platformSubscription.unsubscribe();
         clearInterval(this.locationUpdateInterval);
         this.socket.disconnect();
-        this.backgroundGeolocation.stop();
         this.subscription.unsubscribe();
 
     }
 
     getMarkersPosition() {
-        return new Promise((resolve) => {
+        return new Promise((res, rej) => {
             // Get Deliveryman position
-            this.geolocation.getCurrentPosition()
+            this.geolocation.getCurrentPosition({ timeout: 60000 })
                 .then((position: any) => {
                     const { latitude, longitude } = position.coords; // My position
                     this.myLocation = new LatLng(latitude, longitude);
                     this.getClientPosition(0)
                         .then(() => {
-                            resolve();
+                            res();
                         });
+                })
+                .catch((err) => {
+                   rej(err);
                 });
         });
     }
@@ -246,9 +268,10 @@ export class MapPage implements OnInit {
             this.geolocation.getCurrentPosition()
                 .then((position) => {
                     console.log('la posicion obtenida fue:', position);
-                    if (position.timestamp !== this.lastTimeStamp) {
+                    const {latitude, longitude} = position.coords;
+                    if (latitude !== this.myLocation.lat && longitude !== this.myLocation.lng) {
+                        console.log('Location updated');
                         this.lastTimeStamp = position.timestamp;
-                        const {latitude, longitude} = position.coords;
                         this.myLocation = new LatLng(latitude, longitude);
                         console.log('new location', this.myLocation);
                         const socketData: SocketData = {
@@ -293,9 +316,9 @@ export class MapPage implements OnInit {
             .then(() => {
 
                 this.backgroundGeolocation.on(BackgroundGeolocationEvents.location).subscribe((location: BackgroundGeolocationResponse) => {
-                    //if (location.time !== this.lastTimeStamp) {
+                    const {latitude, longitude} = location;
+                    if (latitude !== this.myLocation.lat && longitude !== this.myLocation.lng) {
                         this.lastTimeStamp = location.time;
-                        const {latitude, longitude} = location;
                         this.myLocation = new LatLng(latitude, longitude);
                         const msg: SocketData = {
                             order: this.clientData.deliveryId,
@@ -304,17 +327,18 @@ export class MapPage implements OnInit {
                             lng: longitude
                         };
                         this.socket.send('position', msg);
-                    // }
+                    }
                 });
 
             });
 
         this.platform.ready()
             .then(() => {
-                this.platform.pause.subscribe(() => {
+                this.platformSubscription = this.platform.pause.subscribe(() => {
                     this.backgroundGeolocation.start();
                 });
                 this.platform.resume.subscribe(() => {
+                    // Should unsubscribe too, but it's not affecting the app right now
                     this.backgroundGeolocation.stop();
                 });
             });

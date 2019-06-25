@@ -3,7 +3,13 @@ import { Component } from '@angular/core';
 import { Platform, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+
+// Providers
 import { Storage } from '@ionic/storage';
+import { JwtDecoderService } from './Services/jwt-decoder/jwt-decoder.service';
+
+// Model
+import { TokenBody } from './Interfaces/token-body';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +22,7 @@ export class AppComponent {
     private statusBar: StatusBar,
     private storage: Storage,
     private navCtrl: NavController,
+    private jwtDecoder: JwtDecoderService,
   ) {
     this.initializeApp();
   }
@@ -25,6 +32,14 @@ export class AppComponent {
         this.storage.get('token')
             .then((data) => {
                 if (data) { // If there is a sesion
+                    this.jwtDecoder.getBody()
+                        .then((body: TokenBody) => {
+                            const date = new Date();
+                            console.log(date.getTime());
+                            console.log(body.exp);
+                            console.log(body.iat);
+                            console.log(body.exp > date.getTime());
+                        });
                     this.navCtrl.navigateForward('/home')
                         .then(() => {
                             setTimeout(() => {
@@ -49,5 +64,5 @@ export class AppComponent {
   hideSplashAndStatusBar() {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-    }
+  }
 }
