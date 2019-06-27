@@ -51,7 +51,7 @@ $(document).ready(function () {
                 } else {
                     let message = '';
                     switch (data.response) {
-                        case 'ID is duplicated!': message = 'El nombre de usuario ya se encuentra registrado'
+                        case 'ID is duplicated!': message = 'El nombre de usuario ya se encuentra registrado';
                         default: message = 'Ocurrio un error inesperado';
                     }
 
@@ -68,6 +68,8 @@ $(document).ready(function () {
             $('.modal-title').text( 'Error' );
             $('.modal-body').text( 'Las contraseñas no coinciden');
             $('#myModal').modal('show');
+            $('.container-login100-form-btn').show();
+            $('#loading').addClass('hide');
         }
     });
 });
