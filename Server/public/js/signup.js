@@ -1,5 +1,5 @@
 var storage = window.localStorage;
-var url = 'http://165.22.186.58';
+var url = 'http://104.248.16.15';
 var port = '12000';
 var signUpEndpoint = '/signup';
 
@@ -8,7 +8,7 @@ $(document).ready(function () {
     const token = storage.getItem('ot');
     if (!token) {
         alert('Sesión no iniciada');
-        window.location.href = "http://165.22.186.58:12000/index.html";
+        window.location.href = "http://104.248.16.15/index.html";
     }
 
     $('#sign-up-form').submit( (e) => {

@@ -71,7 +71,8 @@ export class QrScannerPage implements OnInit {
                                               this.navCtrl.navigateForward(['/map'], navigationExtras); // Redirect to map
                                           });
                                       })
-                                      .catch(() => {
+                                      .catch((err) => {
+                                          console.log(err);
                                           this.zone.run(() => {
                                               this.navCtrl.navigateForward('/home'); // Update was not possible
                                           });

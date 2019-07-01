@@ -20,7 +20,6 @@ import { CallNumber } from '@ionic-native/call-number/ngx';
 import { BackgroundGeolocation } from '@ionic-native/background-geolocation/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
-
 // Modules
 import { IonicStorageModule } from '@ionic/storage';
 

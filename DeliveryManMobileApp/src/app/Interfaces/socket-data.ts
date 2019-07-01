@@ -2,5 +2,7 @@ export interface SocketData {
     order: string;
     deliveryGuyId: string;
     lat: number;
-    lng: number;
+    long: number;
+    latDes: number;
+    lngDes: number;
 }

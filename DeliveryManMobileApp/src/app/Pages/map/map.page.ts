@@ -197,7 +197,9 @@ export class MapPage implements OnInit {
                 order: this.clientData.deliveryId,
                 deliveryGuyId: this.clientData.deliveryGuyId, // Delivery guy id
                 lat: this.myLocation.lat,
-                lng: this.myLocation.lng
+                long: this.myLocation.lng,
+                latDes: this.clientLocation.lat,
+                lngDes: this.clientLocation.lng
             };
             console.log('here', initData);
             this.socket.connect(initData); // Hardcoded id
@@ -278,9 +280,10 @@ export class MapPage implements OnInit {
                             order: this.clientData.deliveryId,
                             deliveryGuyId: this.clientData.deliveryGuyId, // Delivery guy id
                             lat: latitude,
-                            lng: longitude
+                            long: longitude,
+                            latDes: this.clientLocation.lat,
+                            lngDes: this.clientLocation.lng
                         };
-
                         this.socket.send('position', socketData);
                         if (this.marker) {
                             const originString: string = this.myLocation.lat.toString() + ',' + this.myLocation.lng;
@@ -324,7 +327,9 @@ export class MapPage implements OnInit {
                             order: this.clientData.deliveryId,
                             deliveryGuyId: this.clientData.deliveryGuyId, // Delivery guy id
                             lat: latitude,
-                            lng: longitude
+                            long: longitude,
+                            latDes: this.clientLocation.lat,
+                            lngDes: this.clientLocation.lng
                         };
                         this.socket.send('position', msg);
                     }
