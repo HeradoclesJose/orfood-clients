@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Pedidos entrantes</ion-title>
+    <ion-icon class="logout-icon" name="log-out" (click)="logout()"></ion-icon>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <div *ngIf="this.loading" text-center >
+      <ion-spinner class="ordersSpinner" name="circles"></ion-spinner>
+      <p class="loadingOrdersText">Cargando pedidos</p>
+    </div>
+    <div *ngIf="!this.loading && this.thereIsOrders" >
+      <ion-item *ngFor="let order of dataList" (click)="goToOrderDetails(order)" detail>
+        <ion-label text-wrap>
+          <ion-text color="primary">
+            <h3>Pedido #{{order.orderId}}</h3>
+          </ion-text>
+          <p>{{order.direction}}</p>
+          <ion-text color="success">
+            <p>{{order.totalPrice}}€</p>
+          </ion-text>
+        </ion-label>
+      </ion-item>
+    </div>
+    <div *ngIf="!this.loading && !this.thereIsOrders" class="no-orders-container" text-center>
+      <img class="clock" src="../../../assets/clock.png">
+      <p>¡Vaya! Parece que no hay pedidos nuevos en este momento...</p>
+    </div>
+  </ion-list>
+
+ <!-- <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Cargando...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>-->
+</ion-content>

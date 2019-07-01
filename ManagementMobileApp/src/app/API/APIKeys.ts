@@ -1,0 +1,1 @@
+export const DIRECTIONS_API_KEY = 'AIzaSyAQPCoULTMKSgC_Kcub4ZguCixLEhJ-M_I';

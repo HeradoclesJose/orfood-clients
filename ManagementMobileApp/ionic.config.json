@@ -1,0 +1,7 @@
+{
+  "name": "orfood pda",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

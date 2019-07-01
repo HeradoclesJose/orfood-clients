@@ -1,0 +1,67 @@
+.print-button {
+  position: fixed;
+  bottom: 13.5vh;
+  right: 4vw;
+  width: 50px;
+  height: 50px;
+  --border-radius: 50%;
+  opacity: 0.8;
+}
+
+.invoice-item {
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.qr-text {
+  font-size: 133%;
+}
+
+.qrcode-image {
+  max-width: 45vw;
+}
+
+.first-invoice-line {
+  display: flex;
+  justify-content: space-between;
+}
+
+.text-first-invoice-margin {
+  margin-bottom: 0
+}
+
+.invoice-body-margin {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.invoice-details {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  margin-top: 6px;
+}
+
+.invoice-details-header {
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+.invoice-total {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.invisible-div-for-scroll {
+  height: 30vw;
+}
+
+.finish-order {
+  width: 60vw;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 6vh;
+  margin-left: auto;
+  margin-right: auto;
+}
