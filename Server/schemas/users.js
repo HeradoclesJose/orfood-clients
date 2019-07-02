@@ -5,7 +5,9 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema({
   name: { type: String, required: true },
   user: { type: String, required: true, unique: true, dropDups: true },
-  pass: { type: String, required: true }
+  pass: { type: String, required: true },
+  permissions: { type: String, required: true },
+  restaurant: { type: String, required: false }
 }, { collection: 'Users' })
 
 // We export the model
