@@ -68,9 +68,7 @@ const io = socketIo(server)
 
 // Setting up the Sockets
 
-const nsp = io.of('/geolocationOrfood')
-
-nsp.on('connection', function (socket) {
+io.on('connection', function (socket) {
   socket.on('create', function (msg) {
     var data = JSON.parse(msg)
     var geolocation = mongoose.model('geolocation')
@@ -78,7 +76,7 @@ nsp.on('connection', function (socket) {
 
     socket.join(data.order)
     location.save(function (err) {
-      if (err){}
+      if (err) {}
     })
   })
 

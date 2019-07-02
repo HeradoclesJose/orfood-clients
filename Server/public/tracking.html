@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tracking</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+</head>
+<body>
+        <script>
+
+var socket = io.connect('http://165.22.186.58:60000');
+
+var datazo = {
+   "order":"2997"
+}
+
+console.log(datazo);
+
+socket.emit('join',JSON.stringify( datazo), function(data){
+  console.log('on-join ', data)
+})
+
+ console.log('connected ', socket.connected);
+
+socket.on('newLocation', function(data){console.log(data)})
+
+</script>
+</body>
+</html>
