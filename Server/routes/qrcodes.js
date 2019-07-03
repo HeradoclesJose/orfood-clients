@@ -7,12 +7,10 @@ const qr = require('qr-image')
 module.exports = function (app) {
   app.post('/qrcreate', isAuth.isAuthenticated, function (req, res, next) {
     // Get the text to generate QR code
-
-    console.log(req.body)
     let qrTxt = JSON.stringify(req.body)
 
     // Generate QR Code from text
-    var qrPng = qr.imageSync(qrTxt, { type: 'png' })
+    var qrPng = qr.imageSync(qrTxt, { type: 'png', ec_level: 'H' })
     // Generate a random file name
     let qrCodeFileName = req.body.order + '.png'
 
