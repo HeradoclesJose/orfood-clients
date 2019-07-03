@@ -12,7 +12,7 @@ module.exports = function (app) {
 
     // We make a query to check if the data is right, then we send (or not) the token.
     users.find({ user: req.body.user, pass: hash.hashPassword(req.body.password) }, function (_err, docs) {
-      if (docs === 1) {
+      if (docs[0] !== undefined) {
         token = jwt.createToken(docs[0].user, docs[0].permissions)
 
         res.json({

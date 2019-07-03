@@ -10,6 +10,8 @@ function reqError (res, status, message) {
 }
 
 exports.isAuthenticated = function (req, res, next) {
+  console.log(req.path)
+
   if (!req.headers.authorization) {
     reqError(res, 403, 'Tu petición no tiene cabecera de autorización')
   }
@@ -18,30 +20,27 @@ exports.isAuthenticated = function (req, res, next) {
     var token = req.headers.authorization.split(' ')[1]
     var payload = jwt.decode(token, config.secret.token)
 
+    console.log(payload)
+
     if (payload.exp <= moment().unix()) {
       reqError(res, 403, 'El token ha expirado')
     }
 
-    if (payload.perpermissions.level === 'admin') {
-      next()
-    } else if (payload.perpermissions.level === 'manager') {
-      // eslint-disable-next-line no-constant-condition
-      if (req.path === '/qrcreate' || '/pedidos' || '/update-wc-status' || '/reportes') {
-        next()
-      } else {
-        reqError(res, 403, 'No tienes permisos para ver esto')
-      }
-    } else if (payload.perpermissions.level === 'delivery') {
-      // eslint-disable-next-line no-constant-condition
-      if (req.path === '/update-wc-status') {
-        next()
-      } else {
-        reqError(res, 403, 'No tienes permisos para ver esto')
-      }
-    } else {
-      reqError(res, 403, 'Existe un problema con su solicitud, contacta al soporte tecnico')
-    }
+    if (payload.permissions.level === 'admin') next()
+    // } else if (payload.perpermissions.level === 'manager') {
+    //   // eslint-disable-next-line no-constant-condition
+    else if ((req.path === '/qrcreate' || '/pedidos' || '/reportes') & (payload.permissions.level === 'manager')) next()
+    else reqError(res, 403, 'No tienes permisos para ver esto')
+    // } else if (payload.perpermissions.level === 'delivery') {
+    //   // eslint-disable-next-line no-constant-condition
+    //   if (req.path === '/update-wc-status') {
+    //     next()
+    //   } else {
+    //     reqError(res, 403, 'No tienes permisos para ver esto')
+    //   }
+    // else reqError(res, 403, 'Existe un problema con su solicitud, contacta al soporte tecnico')
   } catch (err) {
+    console.log(err)
     reqError(res, 403, 'Se ha anulado tu peticion por motivos de seguridad')
   }
 }

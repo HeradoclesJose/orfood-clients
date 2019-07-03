@@ -5,9 +5,11 @@ const qr = require('qr-image')
 
 // Giving express access to route.
 module.exports = function (app) {
-  app.post('/qrcreate', isAuth.isAuthenticated, function (req, res) {
+  app.post('/qrcreate', isAuth.isAuthenticated, function (req, res, next) {
     // Get the text to generate QR code
-    let qrTxt = req.body
+
+    console.log(req.body)
+    let qrTxt = JSON.stringify(req.body)
 
     // Generate QR Code from text
     var qrPng = qr.imageSync(qrTxt, { type: 'png' })
@@ -15,17 +17,17 @@ module.exports = function (app) {
     let qrCodeFileName = req.body.order + '.png'
 
     fs.writeFileSync('./public/qrcodes/' + qrCodeFileName, qrPng, (err) => {
+      console.log('done')
       if (err) {
-        console.log(err)
         res.json({
           'response': 'Hubo un error con tu solicitud, intentalo de nuevo.',
           'status': '418' })
-      } else {
-        // Send the link of generated QR code
-        res.json({
-          'qrImg': 'qrcodes/' + qrCodeFileName,
-          'status': '418' })
+        return err
       }
     })
+
+    res.json({
+      'qrLink': 'qrcodes/' + qrCodeFileName,
+      'status': '200' })
   })
 }
