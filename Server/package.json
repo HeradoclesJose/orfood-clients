@@ -28,6 +28,7 @@
         "cookie-parser": "^1.4.4",
         "express": "^4.17.0",
         "formidable": "^1.2.1",
+        "fs": "0.0.1-security",
         "jwt-simple": "^0.5.6",
         "moment": "^2.24.0",
         "mongoose": "^5.5.9",
@@ -36,6 +37,7 @@
         "nodemon": "^1.19.0",
         "path": "^0.12.7",
         "pg": "^7.11.0",
+        "qr-image": "^3.2.0",
         "socket.io": "^2.2.0",
         "wpapi": "^1.2.1"
     },

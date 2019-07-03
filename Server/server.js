@@ -16,6 +16,7 @@ const find = require('./routes/geolocation.js')
 const login = require('./routes/login.js')
 const signup = require('./routes/signup.js')
 const woocommerce = require('./routes/woocommerce.js')
+const qrcode = require('./routes/qrcodes.js')
 
 // Connection to Mlbas!
 dbconnect.connect(dbinfo)
@@ -56,6 +57,7 @@ app.use(function (req, res, next) {
 login(app)
 signup(app)
 woocommerce(app, mysql)
+qrcode(app)
 
 // start the server
 app.listen(app.get('port'), function () {

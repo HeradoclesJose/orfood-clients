@@ -11,14 +11,15 @@ module.exports = function (app) {
     var token = ''
 
     // We make a query to check if the data is right, then we send (or not) the token.
-    users.countDocuments({ user: req.body.user, pass: hash.hashPassword(req.body.password) }, function (_err, count) {
-      if (count === 1) {
-        token = jwt.createToken(req.body.user)
+    users.find({ user: req.body.user, pass: hash.hashPassword(req.body.password) }, function (_err, docs) {
+      if (docs === 1) {
+        token = jwt.createToken(docs[0].user, docs[0].permissions)
 
         res.json({
           'response': 'You are now logged in.',
           'token': token,
-          'user': req.body.user,
+          'user': docs[0].user,
+          'permissions': docs[0].permissions,
           'status': '200' })
       } else {
         res.json({

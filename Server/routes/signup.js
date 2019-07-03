@@ -10,15 +10,8 @@ module.exports = function (app) {
   app.post('/signup', isAuth.isAuthenticated, function (req, res) {
     // We create the Document and recover the model.
     var users = mongoose.model('users')
-    var schema
 
-    if (req.body.hasOwnProperty('restaurant')) {
-      schema = { name: req.body.name, user: req.body.user, pass: hash.hashPassword(req.body.password), permissions: req.body.permissions, restaurant: req.body.restaurant }
-    } else {
-      schema = { name: req.body.name, user: req.body.user, pass: hash.hashPassword(req.body.password), permissions: req.body.permissions }
-    }
-
-    var user = users(schema)
+    var user = users({ name: req.body.name, user: req.body.user, pass: hash.hashPassword(req.body.password), permissions: req.body.permissions })
 
     user.save(function (err) {
       if (err) {
