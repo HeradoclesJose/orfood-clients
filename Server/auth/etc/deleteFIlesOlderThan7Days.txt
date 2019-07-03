@@ -1,0 +1,3 @@
+find /path/to/files/ -type f -name '*.png' -mtime +7 -exec rm {} \;
+
+You gotta change the path to the actual one in the VPS.
