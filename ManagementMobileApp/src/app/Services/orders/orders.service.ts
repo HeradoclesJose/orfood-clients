@@ -2,60 +2,44 @@ import { Injectable } from '@angular/core';
 
 // Providers
 import { HTTP } from '@ionic-native/http/ngx';
+import { Storage } from '@ionic/storage';
 
 // Models
-import { BASE_URL } from '../../API/BaseUrl';
-import { Order } from "../../Interfaces/order";
+import {BASE_URL, MAIN_PORT} from '../../API/BaseUrl';
+import { Order } from '../../Interfaces/order';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrdersService {
-  // private loginUrl: string = BASE_URL
-  private ordersInDeliveryUrl: string = BASE_URL + '/delivery/actual';
+  private ordersInDeliveryUrl: string = BASE_URL + MAIN_PORT + '/pedidos';
   private ordersDoneUrl: string = BASE_URL + '/delivery/done';
 
-  constructor(private http: HTTP) { }
+  constructor(private http: HTTP, private storage: Storage) { }
 
   getOrdersInDelivery(): Promise<any> {
     return new Promise((res, rej) => {
-        this.http.get('https://httpbin.org/get', {}, {})
-            .then((data: any) => {
-                const orders: Array<Order> = [];
-                const rn = new Date();
-                const day = rn.getDate();
-                const month = rn.getUTCMonth() + 1;
-                const year = rn.getFullYear();
-                // By now
-                for (let i = 0; i < 15; i++) {
-                    const orderData: Order = {
-                        orderId: i + 1,
-                        clientName: 'Pedro Gonzalez',
-                        orderDate: day + '/' + month + '/' + year,
-                        direction: 'Valle del cauca, Cali, Cra 98 #53-181 Senderos de la pradera',
-                        orderDetails: [
-                            {
-                                description: 'Tiger Tempura Roll',
-                                price: 50
-                            },
-                            {
-                                description: 'California Tempura Roll',
-                                price: 50
-                            }
-                        ],
-                        totalPrice: 100,
-                    };
-                    orders.push(orderData);
-                }
-                res(orders);
-            })
-            .catch((err) => {
-                rej(err);
-            })
-    })
+        this.storage.get('token')
+            .then((token) => {
+                const headers: any = {
+                    Authorization: 'Bearer ' + token
+                };
+                let orders: Array<Order> = [];
+                this.http.get(this.ordersInDeliveryUrl, {}, headers)
+                    .then((data) => {
+                        const ordersJson = JSON.parse(data.data);
+                        orders = ordersJson.message;
+                        // Falta calcular el total
+                        res(orders);
+                    })
+                    .catch((err) => {
+                        rej(err);
+                    });
+            });
+    });
   }
 
-  parseOrderDetails(orderDetailsString:string): Array<{description: string, price:number}> {
+  parseOrderDetails(orderDetailsString: string): Array<{description: string, price:number}> {
       const orderDetails = [];
       const details: Array<string> = orderDetailsString.split('|&&|');
       details.forEach((detail) => {

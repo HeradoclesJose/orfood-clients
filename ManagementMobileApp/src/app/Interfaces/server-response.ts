@@ -3,4 +3,5 @@ export interface ServerResponse {
     token: string;
     user: string;
     status: string;
+    permissions: { level: string, restaurant: string };
 }
