@@ -5,7 +5,11 @@ import { AlertController, IonInfiniteScroll, NavController } from '@ionic/angula
 // Services
 import { OrdersService } from '../../Services/orders/orders.service';
 import { AuthService } from '../../Services/auth/auth.service';
-import { Order } from "../../Interfaces/order";
+import { QrService } from '../../Services/qr/qr.service';
+
+// Models
+import { Order } from '../../Interfaces/order';
+
 
 
 @Component({
@@ -18,22 +22,25 @@ export class TabOrdersPage {
     private dataList: Array<any> = [];
     private loading: boolean = true;
     private thereIsOrders: boolean = false; // Kinda unnecessary but makes me feel the code is cleaner
-    private ordersInterval = null;
+    private ordersInterval: any = null;
+    private qrLoading: boolean = false;
 
 
   constructor(
       private orderService: OrdersService,
+      private qr: QrService,
       private alertCtrl: AlertController,
       private auth: AuthService,
-      private navCtrl: NavController) {}
+      private navCtrl: NavController,
+      ) {}
 
 
   ionViewWillEnter() {
-      console.log('executed once');
+      console.log(this.qr);
       this.orderService.getOrdersInDelivery()
-          .then((data:Array<Order>) => {
+          .then((data: Array<Order>) => {
             this.dataList = data;
-            if(this.dataList.length > 0) {
+            if (this.dataList.length > 0) {
                 this.thereIsOrders = true;
             }
             this.loading = false;
@@ -44,12 +51,12 @@ export class TabOrdersPage {
       this.ordersInterval = setInterval(() => {
           console.log('Se ejecuta');
           this.orderService.getOrdersInDelivery()
-              .then((data:Array<Order>) => {
-                  data.forEach((order:Order, index:number) => {
+              .then((data: Array<Order>) => {
+                  data.forEach((order: Order, index: number) => {
                       const isAlreadyInList: boolean = this.dataList.some((orderInList: Order) => {
                           return orderInList.orderId === order.orderId;
                       });
-                      if(!isAlreadyInList) {
+                      if (!isAlreadyInList) {
                           console.log('one new', order);
                           this.dataList.push(order);
                       }
@@ -60,11 +67,24 @@ export class TabOrdersPage {
                       this.thereIsOrders = false;
                   }
                   this.loading = false;
-              })
+              });
       }, 30000);
   }
 
+    ionViewDidLeave() {
+      clearInterval(this.ordersInterval);
+    }
+
   goToOrderDetails(order: Order) {
+      this.qr.generateQr({
+          deliveryId: order.orderId.toString(),
+          name: order.clientName,
+          phone: order.cellphone,
+          direction: order.direction
+      })
+          .then((data) => {
+            console.log(data);
+          });
       const detailsString = this.orderService.stringifyOrderDetails(order.orderDetails);
       console.log(detailsString);
       const navigationExtras: NavigationExtras = {

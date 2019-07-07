@@ -5,6 +5,17 @@
   font-size: 1.6em;
 }
 
+.qr-modal-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 20;
+  background-color: rgba(0,0,0,0.4);
+}
+
 ion-spinner{
   transform: scale(3) !important;
   width: 28px;

@@ -28,8 +28,15 @@ export class OrdersService {
                 this.http.get(this.ordersInDeliveryUrl, {}, headers)
                     .then((data) => {
                         const ordersJson = JSON.parse(data.data);
+                        console.log(ordersJson);
                         orders = ordersJson.message;
-                        // Falta calcular el total
+                        orders.forEach((order) => {
+                            let totalPrice = 0;
+                            order.orderDetails.forEach((element) => {
+                                totalPrice += element.price;
+                            });
+                            order.totalPrice = totalPrice;
+                        });
                         res(orders);
                     })
                     .catch((err) => {

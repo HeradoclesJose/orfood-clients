@@ -8,23 +8,19 @@
 </ion-header>
 
 <ion-content padding>
-  <div text-center>
-<!--
-    <p class="qr-text">Escanea este código QR Para Iniciar el reparto del pedido</p>
--->
+  <div class="invoice-title" text-center>
     <img class="qrcode-image" src="../../../assets/qrcode.png">
-  </div>
-  <div>
-    <div class="first-invoice-line">
-    <p class="text-first-invoice-margin">No. de órden: {{this.order.orderId}}</p>
-    <p class="text-first-invoice-margin">Fecha: {{this.order.orderDate}}</p>
+    <div>
+      <p class="restaurant-text">{{this.restaurantName}}</p>
     </div>
-    <p class="invoice-body-margin">Cliente: {{this.order.clientName}}</p>
-    <p class="invoice-body-margin">Direccion: {{this.order.direction}}</p>
+  </div>
+  <div class="first-invoice-section">
+      <p class="text-first-invoice-margin">{{this.order.orderDate}}</p>
+      <p class="text-first-invoice-margin">Número de pedido: {{this.order.orderId}}</p>
   </div>
   <div class="invoice-details">
-    <div>
-      <p class="invoice-details-header">Pedido: </p>
+    <div class="invoice-details-header-section">
+      <p class="invoice-details-header">EUR </p>
     </div>
     <div *ngFor="let order of this.order.orderDetails">
       <div class="invoice-item">
@@ -33,7 +29,15 @@
     </div>
   </div>
   <div class="invoice-total">
-    <p>Total {{order.totalPrice}}€</p>
+    <p class="total-text">Total</p>
+    <p class="total-text">{{order.totalPrice}}€</p>
+  </div>
+  <div class="invoice-client-details">
+    <p class="invoice-client-title-data">Detalles del cliente</p>
+    <p class="invoice-client-data">Cliente: {{this.order.clientName}}</p>
+    <p class="invoice-client-data">Direccion: {{this.order.direction}}</p>
+    <p class="invoice-client-title-data">Para contactar con el cliente, llama al:</p>
+    <p class="invoice-client-data">910381154</p>
   </div>
   <div class="invisible-div-for-scroll"></div>
   <ion-button class="print-button" (click)="printOrder()"><ion-icon name="md-print"></ion-icon></ion-button>

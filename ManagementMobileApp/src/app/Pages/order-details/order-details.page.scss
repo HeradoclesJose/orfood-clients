@@ -8,6 +8,14 @@
   opacity: 0.8;
 }
 
+.invoice-title {
+  border-bottom: 1px solid black;
+}
+
+.restaurant-text {
+  font-size: 150%;
+}
+
 .invoice-item {
   padding: 5px;
   display: flex;
@@ -22,24 +30,36 @@
   max-width: 45vw;
 }
 
-.first-invoice-line {
-  display: flex;
-  justify-content: space-between;
+.first-invoice-section {
+  text-align: center;
+  font-size: 110%;
 }
 
 .text-first-invoice-margin {
-  margin-bottom: 0
+  margin-bottom: 0;
+  margin-top: 1.5vw;
 }
 
-.invoice-body-margin {
-  margin-top: 8px;
+.invoice-client-title-data {
   margin-bottom: 0;
+}
+
+.invoice-client-data {
+  margin-top: 1vh;
+  margin-bottom: 0;
+  font-size: 120%;
+}
+
+
+.invoice-details-header-section {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .invoice-details {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
-  margin-top: 6px;
+  margin-top: 1.5vh;
 }
 
 .invoice-details-header {
@@ -49,7 +69,12 @@
 
 .invoice-total {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+}
+
+.total-text {
+  margin: 1vh 0;
 }
 
 .invisible-div-for-scroll {
