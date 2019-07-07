@@ -12,7 +12,7 @@ import { QrData } from '../../Interfaces/qr-data';
   providedIn: 'root'
 })
 export class QrService {
-  private qrUrl: string = BASE_URL + MAIN_PORT + '/qrcodes';
+  private qrUrl: string = BASE_URL + MAIN_PORT + '/qrcreate';
 
   constructor(
       private http: HTTP,
@@ -27,7 +27,6 @@ export class QrService {
                 };
                 this.http.post(this.qrUrl, qrData, headers)
                     .then((data) => {
-                      console.log(data);
                       res(data);
                     })
                     .catch((error) => {

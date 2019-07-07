@@ -36,7 +36,6 @@ export class TabOrdersPage {
 
 
   ionViewWillEnter() {
-      console.log(this.qr);
       this.orderService.getOrdersInDelivery()
           .then((data: Array<Order>) => {
             this.dataList = data;
@@ -76,6 +75,7 @@ export class TabOrdersPage {
     }
 
   goToOrderDetails(order: Order) {
+      this.qrLoading = true;
       this.qr.generateQr({
           deliveryId: order.orderId.toString(),
           name: order.clientName,
@@ -83,21 +83,26 @@ export class TabOrdersPage {
           direction: order.direction
       })
           .then((data) => {
-            console.log(data);
+          console.log(data);
+          this.qrLoading = false;
+          const detailsString = this.orderService.stringifyOrderDetails(order.orderDetails);
+          console.log(detailsString);
+          const navigationExtras: NavigationExtras = {
+              queryParams: {
+                  orderId: order.orderId,
+                  clientName: order.clientName,
+                  orderDate: order.orderDate,
+                  direction: order.direction,
+                  orderDetails: detailsString,
+                  totalPrice: order.totalPrice
+              }
+          };
+          this.navCtrl.navigateForward(['/order-details'], navigationExtras); // Redirect to map
+          })
+          .catch((err) => {
+            console.log(err);
+            this.qrLoading = false;
           });
-      const detailsString = this.orderService.stringifyOrderDetails(order.orderDetails);
-      console.log(detailsString);
-      const navigationExtras: NavigationExtras = {
-          queryParams: {
-              orderId: order.orderId,
-              clientName: order.clientName,
-              orderDate: order.orderDate,
-              direction: order.direction,
-              orderDetails: detailsString,
-              totalPrice: order.totalPrice
-          }
-      };
-      this.navCtrl.navigateForward(['/order-details'], navigationExtras); // Redirect to map
   }
 
  /*   loadData(event) {

@@ -9,6 +9,7 @@ import { Storage } from '@ionic/storage';
 
 // Models
 import { Order } from '../../Interfaces/order';
+import { BASE_URL, MAIN_PORT } from '../../API/BaseUrl';
 
 
 @Component({
@@ -21,6 +22,8 @@ export class OrderDetailsPage implements OnInit {
   private invoiceWasPrinted: boolean = false; // Not a reliable check but... is something
   private order: Order = null;
   private restaurantName: string = 'Arepas Santa rita';
+  private imageFile: string = '';
+  private qrImageUrl: string = BASE_URL + MAIN_PORT + '/qrcodes' + this.imageFile;
 
   constructor(
       private route: ActivatedRoute,
@@ -50,6 +53,7 @@ export class OrderDetailsPage implements OnInit {
               totalPrice,
               cellphone};
       });
+      this.imageFile = this.order.orderId + '.png';
       this.order.orderDetails = this.orderService.parseOrderDetails(this.order.orderDetails);
     /*  this.orderService.parseOrderDetails(this.order.orderDetails).forEach((detail) => {
          this.auxArrayForDetails.push(detail);
