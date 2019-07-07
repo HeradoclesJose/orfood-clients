@@ -23,7 +23,7 @@ export class OrderDetailsPage implements OnInit {
   private order: Order = null;
   private restaurantName: string = 'Arepas Santa rita';
   private imageFile: string = '';
-  private qrImageUrl: string = BASE_URL + MAIN_PORT + '/qrcodes' + this.imageFile;
+  private qrImageUrl: string = '';
 
   constructor(
       private route: ActivatedRoute,
@@ -52,16 +52,16 @@ export class OrderDetailsPage implements OnInit {
               orderDetails,
               totalPrice,
               cellphone};
+          this.qrImageUrl = BASE_URL + MAIN_PORT + '/qrcodes/' + this.order.orderId + '.png';
       });
-      this.imageFile = this.order.orderId + '.png';
       this.order.orderDetails = this.orderService.parseOrderDetails(this.order.orderDetails);
     /*  this.orderService.parseOrderDetails(this.order.orderDetails).forEach((detail) => {
          this.auxArrayForDetails.push(detail);
       });*/
-      console.log(this.order);
       this.storage.get('permissions')
           .then((data) => {
             console.log(data);
+            this.restaurantName = data.restaurant;
           });
   }
 
@@ -76,13 +76,13 @@ export class OrderDetailsPage implements OnInit {
       };
       this.html = this.htmlGenerator.getHTML(this.order);
       this.printer.print(this.html, options)
-          .then((data:any) => {
+          .then((data: any) => {
           console.log('success', data);
           this.invoiceWasPrinted = true;
           })
           .catch((error) => {
               console.log('error', error);
-          })
+          });
   }
 
 }

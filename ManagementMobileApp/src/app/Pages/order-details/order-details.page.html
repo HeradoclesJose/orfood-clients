@@ -9,7 +9,7 @@
 
 <ion-content padding>
   <div class="invoice-title" text-center>
-    <img class="qrcode-image" src="../../../assets/qrcode.png">
+    <img class="qrcode-image" [src]="this.qrImageUrl">
     <div>
       <p class="restaurant-text">{{this.restaurantName}}</p>
     </div>
