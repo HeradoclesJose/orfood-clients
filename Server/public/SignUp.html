@@ -68,6 +68,23 @@
                     <span class="focus-input100" data-symbol="&#xf206;"></span>
                 </div>
 
+                <div class="wrap-input100 validate-input m-b-23" data-validate="El tipo de usuario es requerido">
+                    <span class="label-input100">Tipo de Usuario</span>
+                    <select id="level" class="input100" name="tipo">
+                        <option value="manager">Manager</option>
+                        <option value="delivery" selected>Repartidor</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                    <br>
+                </div>
+
+                <div id="restaurant-section" class="wrap-input100 validate-input m-b-23 hide">
+                    <span class="label-input100">Restaurantes</span>
+                    <select id="resturants" class="input100 " name="tipo">
+                    </select>
+                    <br>
+                </div>
+
                 <div class="wrap-input100 validate-input m-b-23" data-validate="La contraseña es requerida">
                     <span class="label-input100">Contraseña</span>
                     <input id="password-input" class="input100" type="password" name="pass" placeholder="Escribe la contraseña">
