@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { NavigationExtras } from '@angular/router';
 import { AlertController, IonInfiniteScroll, NavController } from '@ionic/angular';
 
@@ -17,7 +17,7 @@ import { Order } from '../../Interfaces/order';
   templateUrl: './tab-orders.page.html',
   styleUrls: ['./tab-orders.page.scss'],
 })
-export class TabOrdersPage {
+export class TabOrdersPage implements OnInit {
     @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
     private dataList: Array<any> = [];
     private loading: boolean = true;
@@ -26,7 +26,7 @@ export class TabOrdersPage {
     private qrLoading: boolean = false;
 
 
-  constructor(
+    constructor(
       private orderService: OrdersService,
       private qr: QrService,
       private alertCtrl: AlertController,
@@ -34,11 +34,13 @@ export class TabOrdersPage {
       private navCtrl: NavController,
       ) {}
 
+    ngOnInit() { console.log('init');}
 
-  ionViewWillEnter() {
+    ionViewWillEnter() {
       this.orderService.getOrdersInDelivery()
           .then((data: Array<Order>) => {
             this.dataList = data;
+            console.log(this.dataList);
             if (this.dataList.length > 0) {
                 this.thereIsOrders = true;
             }
@@ -51,17 +53,17 @@ export class TabOrdersPage {
           console.log('Se ejecuta');
           this.orderService.getOrdersInDelivery()
               .then((data: Array<Order>) => {
-                  data.forEach((order: Order, index: number) => {
-                      const isAlreadyInList: boolean = this.dataList.some((orderInList: Order) => {
-                          return orderInList.orderId === order.orderId;
-                      });
-                      if (!isAlreadyInList) {
-                          console.log('one new', order);
-                          this.dataList.push(order);
-                      }
-                  });
-                  if(this.dataList.length > 0) {
+                  if (data.length > 0) {
                       this.thereIsOrders = true;
+                      data.forEach((order: Order, index: number) => {
+                          const isAlreadyInList: boolean = this.dataList.some((orderInList: Order) => {
+                              return orderInList.orderId === order.orderId;
+                          });
+                          if (!isAlreadyInList) {
+                              console.log('one new', order);
+                              this.dataList.push(order);
+                          }
+                      });
                   } else {
                       this.thereIsOrders = false;
                   }
@@ -70,31 +72,30 @@ export class TabOrdersPage {
       }, 30000);
   }
 
-    ionViewDidLeave() {
+   ionViewWillLeave() {
       clearInterval(this.ordersInterval);
-    }
+   }
 
   goToOrderDetails(order: Order) {
       this.qrLoading = true;
       this.qr.generateQr({
           deliveryId: order.orderId.toString(),
           name: order.clientName,
-          phone: order.cellphone,
-          direction: order.direction
+          phone: order.phone,
+          direction: order.address
       })
           .then((data) => {
-          console.log(data);
           this.qrLoading = false;
           const detailsString = this.orderService.stringifyOrderDetails(order.orderDetails);
-          console.log(detailsString);
           const navigationExtras: NavigationExtras = {
               queryParams: {
                   orderId: order.orderId,
                   clientName: order.clientName,
                   orderDate: order.orderDate,
-                  direction: order.direction,
+                  address: order.address,
                   orderDetails: detailsString,
-                  totalPrice: order.totalPrice
+                  totalPrice: order.totalPrice,
+                  phone: order.phone
               }
           };
           this.navCtrl.navigateForward(['/order-details'], navigationExtras); // Redirect to map

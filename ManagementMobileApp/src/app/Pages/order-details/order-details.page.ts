@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 // Services
 import { Printer, PrintOptions } from '@ionic-native/printer/ngx';
@@ -10,6 +11,7 @@ import { Storage } from '@ionic/storage';
 // Models
 import { Order } from '../../Interfaces/order';
 import { BASE_URL, MAIN_PORT } from '../../API/BaseUrl';
+import {DeliveryStatusService} from '../../Services/delivery-status/delivery-status.service';
 
 
 @Component({
@@ -22,7 +24,6 @@ export class OrderDetailsPage implements OnInit {
   private invoiceWasPrinted: boolean = false; // Not a reliable check but... is something
   private order: Order = null;
   private restaurantName: string = 'Arepas Santa rita';
-  private imageFile: string = '';
   private qrImageUrl: string = '';
 
   constructor(
@@ -30,7 +31,9 @@ export class OrderDetailsPage implements OnInit {
       private printer: Printer,
       private htmlGenerator: HtmlGeneratorService,
       private orderService: OrdersService,
-      private storage: Storage
+      private storage: Storage,
+      private deliveryStatus: DeliveryStatusService,
+      private navCtrl: NavController
   ) { }
 
   ngOnInit() {
@@ -39,19 +42,20 @@ export class OrderDetailsPage implements OnInit {
               orderId,
               clientName,
               orderDate,
-              direction,
+              address,
               orderDetails,
               totalPrice,
-              cellphone
+              phone
           } = params;
           this.order = {
               orderId,
               clientName,
               orderDate,
-              direction,
+              address,
               orderDetails,
               totalPrice,
-              cellphone};
+              phone
+          };
           this.qrImageUrl = BASE_URL + MAIN_PORT + '/qrcodes/' + this.order.orderId + '.png';
       });
       this.order.orderDetails = this.orderService.parseOrderDetails(this.order.orderDetails);
@@ -65,8 +69,6 @@ export class OrderDetailsPage implements OnInit {
           });
   }
 
-
-
   printOrder() {
       const options: PrintOptions = {
           name: 'Order-' + this.order.orderId,
@@ -74,7 +76,7 @@ export class OrderDetailsPage implements OnInit {
           landscape: true,
           grayscale: true
       };
-      this.html = this.htmlGenerator.getHTML(this.order);
+      this.html = this.htmlGenerator.getHTML(this.order, this.restaurantName, this.qrImageUrl);
       this.printer.print(this.html, options)
           .then((data: any) => {
           console.log('success', data);
@@ -82,6 +84,22 @@ export class OrderDetailsPage implements OnInit {
           })
           .catch((error) => {
               console.log('error', error);
+          });
+  }
+
+  finishInvoice() {
+      const updateData = {
+          orderId: this.order.orderId,
+          wcStatus: 'cook'
+      };
+      this.deliveryStatus.updateStatus(updateData)
+          .then((data) => {
+            console.log(data);
+              this.navCtrl.navigateForward('/tabs'); // Redirect to map
+
+          })
+          .catch((err) => {
+            console.log(err);
           });
   }
 

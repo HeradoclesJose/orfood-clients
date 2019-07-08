@@ -28,14 +28,31 @@ export class OrdersService {
                 this.http.get(this.ordersInDeliveryUrl, {}, headers)
                     .then((data) => {
                         const ordersJson = JSON.parse(data.data);
-                        console.log(ordersJson);
-                        orders = ordersJson.message;
+                        orders = ordersJson.data;
                         orders.forEach((order) => {
                             let totalPrice = 0;
                             order.orderDetails.forEach((element) => {
                                 totalPrice += element.price;
                             });
                             order.totalPrice = totalPrice;
+                            const newDetails: Array<{ amount: number, description: string, price: number}> = [];
+                            while (order.orderDetails.length > 0) {
+                                const detail = order.orderDetails.shift();
+                                let counter = 1;
+                                const elementsToRemove = [];
+                                for (let i = 0; i < order.orderDetails.length; i++) {
+                                    if (order.orderDetails[i].description === detail.description) {
+                                        counter++;
+                                        elementsToRemove.push(i);
+                                    }
+                                }
+                                detail.amount = counter;
+                                elementsToRemove.forEach((position) => {
+                                   order.orderDetails.splice(position, 1);
+                                });
+                                newDetails.push(detail);
+                            }
+                            order.orderDetails = newDetails;
                         });
                         res(orders);
                     })
@@ -46,7 +63,7 @@ export class OrdersService {
     });
   }
 
-  parseOrderDetails(orderDetailsString: string): Array<{description: string, price:number}> {
+  parseOrderDetails(orderDetailsString: string): Array<{description: string, price: number}> {
       const orderDetails = [];
       const details: Array<string> = orderDetailsString.split('|&&|');
       details.forEach((detail) => {
@@ -54,21 +71,22 @@ export class OrdersService {
          // Actually there is only 2 fields in the detail
           const detailJson = {
               description: detailElements[0],
-              price: detailElements[1]
+              price: detailElements[1],
+              amount: detailElements[2],
+              itemNumber: detailElements[3]
           };
           orderDetails.push(detailJson);
       });
-      console.log('out', orderDetails);
       return orderDetails;
   }
 
 
-  stringifyOrderDetails (orderDetails: Array<{description: string, price:number}>): string {
+  stringifyOrderDetails(orderDetails: Array<{description: string, price: number}>): string {
       let orderDetailString = '';
-      orderDetails.forEach((detail) => {
-          orderDetailString = orderDetailString + detail.description + '|,,|' + detail.price + '|&&|';
+      orderDetails.forEach((detail: any) => {
+          orderDetailString = orderDetailString + detail.description + '|,,|' + detail.price + '|,,|' + detail.amount + '|,,|' + detail.itemNumber + '|&&|';
       });
-      orderDetailString = orderDetailString.substr(0, orderDetailString.length-4);
+      orderDetailString = orderDetailString.substr(0, orderDetailString.length - 4);
       return orderDetailString;
   }
 

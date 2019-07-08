@@ -24,7 +24,7 @@
     </div>
     <div *ngFor="let order of this.order.orderDetails">
       <div class="invoice-item">
-        <span>{{order.description}} </span><span>{{order.price}}€</span>
+        <span class="small-text">{{order.amount}}X  #{{order.itemNumber}}</span><span>{{order.description}} </span><span>{{order.price * order.amount}}€</span>
       </div>
     </div>
   </div>
@@ -32,14 +32,14 @@
     <p class="total-text">Total</p>
     <p class="total-text">{{order.totalPrice}}€</p>
   </div>
-  <div class="invoice-client-details">
+  <div>
     <p class="invoice-client-title-data">Detalles del cliente</p>
-    <p class="invoice-client-data">Cliente: {{this.order.clientName}}</p>
-    <p class="invoice-client-data">Direccion: {{this.order.direction}}</p>
+    <p class="invoice-client-data">Nombre: {{this.order.clientName}}</p>
+    <p class="invoice-client-data">Direccion: {{this.order.address}}</p>
     <p class="invoice-client-title-data">Para contactar con el cliente, llama al:</p>
-    <p class="invoice-client-data">910381154</p>
+    <p class="invoice-client-data">{{this.order.phone}}</p>
   </div>
   <div class="invisible-div-for-scroll"></div>
   <ion-button class="print-button" (click)="printOrder()"><ion-icon name="md-print"></ion-icon></ion-button>
-  <ion-button class="finish-order" [disabled]="!this.invoiceWasPrinted" round>Finalizar pedido</ion-button>
+  <ion-button class="finish-order" (click)="finishInvoice()" [disabled]="!this.invoiceWasPrinted" round>Finalizar pedido</ion-button>
 </ion-content>
