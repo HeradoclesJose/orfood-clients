@@ -1,9 +1,30 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>tab-orders-completed</ion-title>
+    <ion-title>Reportes</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-list>
+    <ion-list-header>Filtros</ion-list-header>
 
+    <ion-item>
+      <ion-label>Tiempo</ion-label>
+      <ion-select placeholder="Elegir">
+        <ion-select-option value="1w">Hace 1 semana</ion-select-option>
+        <ion-select-option value="1m">Hace 1 mes</ion-select-option>
+        <ion-select-option value="1y">Hace 1 año</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Precio</ion-label>
+      <ion-select placeholder="Elegir">
+        <ion-select-option value="0-50">Entre 0€ - 50€</ion-select-option>
+        <ion-select-option value="50-200">Entre 50€ - 200€</ion-select-option>
+        <ion-select-option value="200+">200€+</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+  </ion-list>
 </ion-content>

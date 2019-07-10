@@ -12,7 +12,7 @@ import {BASE_URL, SOCKET_PORT} from '../../API/BaseUrl';
 export class SocketService {
   private roomCreated: boolean = false;
   private socket: any = null;
-  private url: string =  BASE_URL + SOCKET_PORT + '/geolocationOrfood';
+  private url: string =  BASE_URL + SOCKET_PORT;
 
   constructor() { }
 

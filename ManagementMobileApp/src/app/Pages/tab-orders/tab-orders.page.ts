@@ -47,10 +47,9 @@ export class TabOrdersPage implements OnInit {
             this.loading = false;
           })
           .catch((err) => {
-            console.log(err);
+            console.log('getOrdersError', err);
           });
       this.ordersInterval = setInterval(() => {
-          console.log('Se ejecuta');
           this.orderService.getOrdersInDelivery()
               .then((data: Array<Order>) => {
                   if (data.length > 0) {

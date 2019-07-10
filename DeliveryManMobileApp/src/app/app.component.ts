@@ -22,7 +22,6 @@ export class AppComponent {
     private statusBar: StatusBar,
     private storage: Storage,
     private navCtrl: NavController,
-    private jwtDecoder: JwtDecoderService,
   ) {
     this.initializeApp();
   }
@@ -32,14 +31,6 @@ export class AppComponent {
         this.storage.get('token')
             .then((data) => {
                 if (data) { // If there is a sesion
-                    this.jwtDecoder.getBody()
-                        .then((body: TokenBody) => {
-                            const date = new Date();
-                            console.log(date.getTime());
-                            console.log(body.exp);
-                            console.log(body.iat);
-                            console.log(body.exp > date.getTime());
-                        });
                     this.navCtrl.navigateForward('/home')
                         .then(() => {
                             setTimeout(() => {
