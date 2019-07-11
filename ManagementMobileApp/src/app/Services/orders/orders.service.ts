@@ -63,6 +63,19 @@ export class OrdersService {
     });
   }
 
+  getOrdersWithFilters(filtes: Array<any>): Promise<any> {
+      return new Promise((res, rej) => {
+          this.http.get('', {}, {})
+              .then((data) => {
+                res(data);
+              })
+              .catch((error) => {
+                console.log(error);
+                rej(error);
+              });
+      });
+  }
+
   parseOrderDetails(orderDetailsString: string): Array<{description: string, price: number}> {
       const orderDetails = [];
       const details: Array<string> = orderDetailsString.split('|&&|');
