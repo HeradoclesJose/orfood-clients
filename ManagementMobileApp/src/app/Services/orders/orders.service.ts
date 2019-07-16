@@ -5,7 +5,7 @@ import { HTTP } from '@ionic-native/http/ngx';
 import { Storage } from '@ionic/storage';
 
 // Models
-import {BASE_URL, MAIN_PORT} from '../../API/BaseUrl';
+import { BASE_URL, MAIN_PORT } from '../../API/BaseUrl';
 import { Order } from '../../Interfaces/order';
 
 @Injectable({
@@ -13,7 +13,6 @@ import { Order } from '../../Interfaces/order';
 })
 export class OrdersService {
   private ordersInDeliveryUrl: string = BASE_URL + MAIN_PORT + '/pedidos';
-  private ordersDoneUrl: string = BASE_URL + '/delivery/done';
 
   constructor(private http: HTTP, private storage: Storage) { }
 

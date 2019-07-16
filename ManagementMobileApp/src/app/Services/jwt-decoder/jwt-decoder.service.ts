@@ -8,7 +8,6 @@ import { Storage } from '@ionic/storage';
 })
 export class JwtDecoderService {
 
-  // Could get the token here, but if a method is executed and token isn't retrieved from ls...
   constructor(private storage: Storage) {}
 
   getBody(): Promise<any> {

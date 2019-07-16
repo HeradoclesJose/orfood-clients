@@ -1,6 +1,6 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavigationExtras } from '@angular/router';
-import { AlertController, IonInfiniteScroll, NavController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 
 // Services
 import { OrdersService } from '../../Services/orders/orders.service';
@@ -10,19 +10,17 @@ import { QrService } from '../../Services/qr/qr.service';
 // Models
 import { Order } from '../../Interfaces/order';
 
-
-
 @Component({
   selector: 'app-tab-orders',
   templateUrl: './tab-orders.page.html',
   styleUrls: ['./tab-orders.page.scss'],
 })
-export class TabOrdersPage implements OnInit {
-    @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
-    private dataList: Array<any> = [];
+export class TabOrdersPage {
+    private dataList: Array<Order> = [];
     private loading: boolean = true;
     private thereIsOrders: boolean = false; // Kinda unnecessary but makes me feel the code is cleaner
     private ordersInterval: any = null;
+    private intervalFrequenzy: number = 90000; // A minute and a half, could be increased
     private qrLoading: boolean = false;
 
 
@@ -34,20 +32,18 @@ export class TabOrdersPage implements OnInit {
       private navCtrl: NavController,
       ) {}
 
-    ngOnInit() { console.log('init');}
 
     ionViewWillEnter() {
       this.orderService.getOrdersInDelivery()
           .then((data: Array<Order>) => {
             this.dataList = data;
-            console.log(this.dataList);
             if (this.dataList.length > 0) {
                 this.thereIsOrders = true;
             }
             this.loading = false;
           })
-          .catch((err) => {
-            console.log('getOrdersError', err);
+          .catch((error) => {
+            console.log('getOrdersError', error);
           });
       this.ordersInterval = setInterval(() => {
           this.orderService.getOrdersInDelivery()
@@ -59,7 +55,6 @@ export class TabOrdersPage implements OnInit {
                               return orderInList.orderId === order.orderId;
                           });
                           if (!isAlreadyInList) {
-                              console.log('one new', order);
                               this.dataList.push(order);
                           }
                       });
@@ -68,7 +63,7 @@ export class TabOrdersPage implements OnInit {
                   }
                   this.loading = false;
               });
-      }, 30000);
+      }, this.intervalFrequenzy);
   }
 
    ionViewWillLeave() {
@@ -83,7 +78,7 @@ export class TabOrdersPage implements OnInit {
           phone: order.phone,
           direction: order.address
       })
-          .then((data) => {
+          .then(() => {
           this.qrLoading = false;
           const detailsString = this.orderService.stringifyOrderDetails(order.orderDetails);
           const navigationExtras: NavigationExtras = {
@@ -99,53 +94,34 @@ export class TabOrdersPage implements OnInit {
           };
           this.navCtrl.navigateForward(['/order-details'], navigationExtras); // Redirect to map
           })
-          .catch((err) => {
-            console.log(err);
+          .catch((error) => {
+            console.log('QRGeneratingError', error);
             this.qrLoading = false;
           });
   }
 
- /*   loadData(event) {
 
-        setTimeout(() => {
-            for (let i = 0; i < 25; i++) {
-                const orderData = {
-                    id: i + this.dataList.length,
-                    direction: 'Valle del cauca, Cali, Cra 98 #53-181 Senderos de la pradera',
-                    price: '10€'
-                };
-                this.dataList.push(orderData);
-            }
-            event.target.complete();
-            // App logic to determine if all data is loaded
-            // and disable the infinite scroll
-            if (this.dataList.length == 1000) {
-                event.target.disabled = true;
-            }
-        }, 500);
-    }*/
-
-    async logout() {
-        const logoutAlert: any = await this.alertCtrl.create({
-            header: '¿Desea cerrar sesión?',
-            buttons: [
-                {
-                    text: 'Cancelar',
-                    role: 'cancel',
-                    cssClass: 'secondary'
-                },
-                {
-                    text: 'Confirmar',
-                    handler: () => {
-                        this.auth.logout()
-                            .then(() => {
-                                this.navCtrl.navigateBack('');
-                            });
-                    }
-                }
-            ]
-        });
-        await logoutAlert.present();
+  async logout() {
+      const logoutAlert: any = await this.alertCtrl.create({
+          header: '¿Desea cerrar sesión?',
+          buttons: [
+              {
+                  text: 'Cancelar',
+                  role: 'cancel',
+                  cssClass: 'secondary'
+              },
+              {
+                  text: 'Confirmar',
+                  handler: () => {
+                      this.auth.logout()
+                          .then(() => {
+                              this.navCtrl.navigateBack('');
+                          });
+                  }
+              }
+          ]
+      });
+      await logoutAlert.present();
     }
 
 }

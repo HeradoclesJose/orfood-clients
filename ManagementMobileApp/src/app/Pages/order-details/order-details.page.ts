@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { AlertController, NavController} from '@ionic/angular';
 
 // Services
 import { Printer, PrintOptions } from '@ionic-native/printer/ngx';
 import { HtmlGeneratorService } from '../../Services/html-generator/html-generator.service';
 import { OrdersService } from '../../Services/orders/orders.service';
+import { DeliveryStatusService } from '../../Services/delivery-status/delivery-status.service';
 import { Storage } from '@ionic/storage';
 
 // Models
 import { Order } from '../../Interfaces/order';
 import { BASE_URL, MAIN_PORT } from '../../API/BaseUrl';
-import {DeliveryStatusService} from '../../Services/delivery-status/delivery-status.service';
-
+import {OrderStatusData} from "../../Interfaces/order-status-data";
 
 @Component({
   selector: 'app-order-details',
@@ -23,7 +23,7 @@ export class OrderDetailsPage implements OnInit {
   private html: string = '';
   private invoiceWasPrinted: boolean = false; // Not a reliable check but... is something
   private order: Order = null;
-  private restaurantName: string = 'Arepas Santa rita';
+  private restaurantName: string = '';
   private qrImageUrl: string = '';
 
   constructor(
@@ -33,11 +33,12 @@ export class OrderDetailsPage implements OnInit {
       private orderService: OrdersService,
       private storage: Storage,
       private deliveryStatus: DeliveryStatusService,
-      private navCtrl: NavController
+      private navCtrl: NavController,
+      private alertCtrl: AlertController
   ) { }
 
   ngOnInit() {
-      this.route.queryParams.subscribe((params: any) => {
+      this.route.queryParams.subscribe((params: Order) => {
           const {
               orderId,
               clientName,
@@ -59,13 +60,26 @@ export class OrderDetailsPage implements OnInit {
           this.qrImageUrl = BASE_URL + MAIN_PORT + '/qrcodes/' + this.order.orderId + '.png';
       });
       this.order.orderDetails = this.orderService.parseOrderDetails(this.order.orderDetails);
-    /*  this.orderService.parseOrderDetails(this.order.orderDetails).forEach((detail) => {
-         this.auxArrayForDetails.push(detail);
-      });*/
       this.storage.get('permissions')
-          .then((data) => {
-            console.log(data);
+          .then((data: {restaurant: string, level: string }) => {
             this.restaurantName = data.restaurant;
+          })
+          .catch(async (error) => {
+              console.log('PermissionsError', error);
+              const alert: any = await this.alertCtrl.create({
+                  header: 'Error',
+                  message: 'Ha ocurrido un error al revisar tus permisos de seguridad',
+                  buttons: [
+                      {
+                          text: 'Aceptar',
+                          handler: () => {
+                              this.navCtrl.navigateBack('');
+                          },
+                          cssClass: 'secondary'
+                      }
+                  ]
+              });
+              await alert.present();
           });
   }
 
@@ -78,28 +92,41 @@ export class OrderDetailsPage implements OnInit {
       };
       this.html = this.htmlGenerator.getHTML(this.order, this.restaurantName, this.qrImageUrl);
       this.printer.print(this.html, options)
-          .then((data: any) => {
-          console.log('success', data);
+          .then(() => {
+          // Sometimes when you press the hardware backbutton this will be executed
+          // even if the document was not printed
           this.invoiceWasPrinted = true;
           })
           .catch((error) => {
-              console.log('error', error);
+              console.log('PrinterError', error);
           });
   }
 
   finishInvoice() {
-      const updateData = {
-          orderId: this.order.orderId,
+      const updateData: OrderStatusData = {
+          orderId: this.order.orderId.toString(),
           wcStatus: 'cook'
       };
       this.deliveryStatus.updateStatus(updateData)
-          .then((data) => {
-            console.log(data);
-              this.navCtrl.navigateForward('/tabs'); // Redirect to map
-
+          .then(() => {
+            this.navCtrl.navigateForward('/tabs');
           })
-          .catch((err) => {
-            console.log(err);
+          .catch(async (error) => {
+            console.log('UpdateError', error);
+            const alert: any = await this.alertCtrl.create({
+                header: 'Error',
+                message: 'Ha ocurrido un error al intentar actualizar el estado del pedido',
+                buttons: [
+                    {
+                        text: 'Aceptar',
+                        handler: () => {
+                            this.navCtrl.navigateForward('/tabs');
+                        },
+                        cssClass: 'secondary'
+                    }
+                ]
+              });
+            await alert.present();
           });
   }
 

@@ -1,4 +1,4 @@
 export interface OrderStatusData {
     orderId: string;
-    wsStatus: string;
+    wcStatus: string;
 }

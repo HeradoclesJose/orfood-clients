@@ -1,11 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController, AlertController, Platform } from '@ionic/angular';
 
 // Services
 import { AuthService } from '../../Services/auth/auth.service';
-
-// Models
-import { ServerResponse } from '../../Interfaces/server-response';
 
 @Component({
     selector: 'app-login',
@@ -15,7 +12,7 @@ import { ServerResponse } from '../../Interfaces/server-response';
 export class LoginPage {
     loginData: {user: string, password: string} = {user: '', password: ''};
     loading: boolean = false;
-    subscription: any = null
+    backButtonSubscription: any = null;
 
     constructor(
         private auth: AuthService,
@@ -25,20 +22,19 @@ export class LoginPage {
     ) { }
 
     ionViewDidEnter() {
-        this.subscription = this.platform.backButton.subscribe(() => {
+        this.backButtonSubscription = this.platform.backButton.subscribe(() => {
             navigator['app'].exitApp();
         });
     }
 
-    ionViewWillLeave(){
-        this.subscription.unsubscribe();
+    ionViewWillLeave() {
+        this.backButtonSubscription.unsubscribe();
     }
 
     login() {
         this.loading = true;
         this.auth.login(this.loginData)
             .then(async (data: any) => {
-                console.log('login data', data); // Check server response to allow login
                 this.loading = false;
                 if (data.status === '200' && data.message === 'Inicio exitoso') {
                     this.loginData.user = '';
@@ -59,10 +55,22 @@ export class LoginPage {
                     await alert.present();
                 }
             })
-            .catch((error) => {
-                // Show error message for user
+            .catch(async (error) => {
+                // Should be improved
+                console.log('LoginError', error);
                 this.loading = false;
-                console.log(error);
+                const alert: any = await this.alertCtrl.create({
+                    header: 'Error',
+                    message: 'Ha ocurrido un error inesperado',
+                    buttons: [
+                        {
+                            text: 'Aceptar',
+                            role: 'cancel',
+                            cssClass: 'secondary'
+                        }
+                    ]
+                });
+                await alert.present();
             });
     }
 

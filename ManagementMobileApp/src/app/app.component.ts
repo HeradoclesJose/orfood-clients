@@ -4,13 +4,8 @@ import { NavController, Platform} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
-
-// Providers
+// Services
 import { Storage } from '@ionic/storage';
-import { JwtDecoderService } from './Services/jwt-decoder/jwt-decoder.service';
-
-// Model
-import { TokenBody } from './Interfaces/token-body';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +18,6 @@ export class AppComponent {
     private statusBar: StatusBar,
     private navCtrl: NavController,
     private storage: Storage,
-    private jwtDecoder: JwtDecoderService,
   ) {
     this.initializeApp();
   }
@@ -47,7 +41,8 @@ export class AppComponent {
                     this.hideSplashAndStatusBar();
                 }
             })
-            .catch((error) => {
+            .catch(() => {
+                // No Token found
                 this.hideSplashAndStatusBar();
             });
     });

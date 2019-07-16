@@ -12,8 +12,7 @@ import { ServerResponse } from '../../Interfaces/server-response';
   providedIn: 'root'
 })
 export class AuthService {
-  private loginUrl: string = BASE_URL + MAIN_PORT + '/login'; // replace with login url
-  private signUpUrl: string = BASE_URL + '/signup';
+  private loginUrl: string = BASE_URL + MAIN_PORT + '/login';
 
   constructor(private http: HTTP, private storage: Storage) { }
 
@@ -25,7 +24,7 @@ export class AuthService {
                   const data: ServerResponse = JSON.parse(response.data);
                   if (data.status === '200' && data.response === 'You are now logged in.') {
                       console.log('Aqui toke', data);
-                      this.storage.set('token', data.token); // Just to know the user is logged later
+                      this.storage.set('token', data.token);
                       this.storage.set('permissions', data.permissions);
                       resolve({ message: 'Inicio exitoso', status: data.status});
                   } else {
@@ -49,22 +48,4 @@ export class AuthService {
         });
   }
 
- /* tokenTest() {
-      return new Promise((resolve) => {
-          this.storage.get('token')
-              .then((token) => {
-                  const headers: any = {
-                       Authorization: 'Bearer ' + token
-                  };
-                  console.log(headers);
-                  this.http.post(this.signUpUrl, {name: 'Pedro', user: '1', password: '1'}, headers)
-                      .then((data: any) => {
-                          console.log('respuesta heroku:', data);
-                      })
-                      .catch((error) => {
-                          console.log(error);
-                      });
-              });
-      });
-  }*/
 }
