@@ -17,20 +17,20 @@ export class AuthService {
   constructor(private http: HTTP, private storage: Storage) { }
 
   login(loginData: any) {
-      return new Promise((resolve) => {
+      return new Promise((res, rej) => {
           this.http.post(this.loginUrl, loginData, {})
               .then((response: any) => {
-                  console.log(response.data);
                   const data: ServerResponse = JSON.parse(response.data);
                   if (data.status === '200' && data.response === 'You are now logged in.') {
-                      console.log('Aqui toke', data);
                       this.storage.set('token', data.token);
                       this.storage.set('permissions', data.permissions);
-                      resolve({ message: 'Inicio exitoso', status: data.status});
+                      res({ message: 'Inicio exitoso', status: data.status});
                   } else {
                       // Switch to handle all the codes and give a proper response
-                      // By now:
-                      resolve({ message: 'Usuario y contraseña incorrectos', status: data.status});
+                      switch (data.status) {
+                          case '418': rej({ message: 'Usuario y contraseña incorrectos', status: data.status}); break;
+                          default: rej({ message: 'Ocurrio un error desconocido', status: data.status}); break;
+                      }
                   }
               });
       });

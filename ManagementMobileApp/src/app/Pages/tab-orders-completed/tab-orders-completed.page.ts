@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import {AlertController, NavController} from '@ionic/angular';
 import { OrdersService } from '../../Services/orders/orders.service';
 import { NavigationExtras } from '@angular/router';
 
@@ -20,7 +20,8 @@ export class TabOrdersCompletedPage implements OnInit {
     constructor(
         private orderService: OrdersService,
         private qr: QrService,
-        private navCtrl: NavController
+        private navCtrl: NavController,
+        private alertCtrl: AlertController
     ) {}
 
     ngOnInit() {
@@ -56,11 +57,23 @@ export class TabOrdersCompletedPage implements OnInit {
                         phone: order.phone
                     }
                 };
-                this.navCtrl.navigateForward(['/order-details'], navigationExtras); // Redirect to map
+                this.navCtrl.navigateForward(['/order-details'], navigationExtras);
             })
-            .catch((error) => {
+            .catch(async (error) => {
                 console.log('QRGeneratingError', error);
                 this.qrLoading = false;
+                const qrError: any = await this.alertCtrl.create({
+                    header: 'Error',
+                    message: 'Ocurrió un error al intentar generar el codigo QR del pedido',
+                    buttons: [
+                        {
+                            text: 'Aceptar',
+                            role: 'cancel',
+                            cssClass: 'secondary'
+                        }
+                    ]
+                });
+                await qrError.present();
             });
     }
 

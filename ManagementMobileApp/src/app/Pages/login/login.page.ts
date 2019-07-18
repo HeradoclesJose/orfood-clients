@@ -40,28 +40,14 @@ export class LoginPage {
                     this.loginData.user = '';
                     this.loginData.password = '';
                     this.navCtrl.navigateForward('/tabs');
-                } else {
-                    const alert: any = await this.alertCtrl.create({
-                        header: 'Error',
-                        message: data.message,
-                        buttons: [
-                            {
-                                text: 'Aceptar',
-                                role: 'cancel',
-                                cssClass: 'secondary'
-                            }
-                        ]
-                    });
-                    await alert.present();
                 }
             })
             .catch(async (error) => {
-                // Should be improved
                 console.log('LoginError', error);
                 this.loading = false;
                 const alert: any = await this.alertCtrl.create({
                     header: 'Error',
-                    message: 'Ha ocurrido un error inesperado',
+                    message: error.message,
                     buttons: [
                         {
                             text: 'Aceptar',

@@ -6,11 +6,8 @@ import { NavController, AlertController, Platform } from '@ionic/angular';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
-
-
 // Services
 import { AuthService } from '../../Services/auth/auth.service';
-
 
 @Component({
   selector: 'app-home',

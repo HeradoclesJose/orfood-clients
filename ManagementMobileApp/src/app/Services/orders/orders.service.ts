@@ -62,7 +62,8 @@ export class OrdersService {
     });
   }
 
-  getOrdersWithFilters(filtes: Array<any>): Promise<any> {
+    // Will implement this in later versions
+    /*getOrdersWithFilters(filtes: Array<any>): Promise<any> {
       return new Promise((res, rej) => {
           this.http.get('', {}, {})
               .then((data) => {
@@ -73,7 +74,7 @@ export class OrdersService {
                 rej(error);
               });
       });
-  }
+  }*/
 
   parseOrderDetails(orderDetailsString: string): Array<{description: string, price: number}> {
       const orderDetails = [];
@@ -102,26 +103,5 @@ export class OrdersService {
       return orderDetailString;
   }
 
-  // Lets Wait for version 1.1
-/*
-  getDeliveredOrders(): Promise<any> {
-    return new Promise((res, rej) => {
-      this.http.get('https://httpbin.org/get', {}, {})
-          .then((data: any) => {
-              const orders: Array<any> = [];
-              for (let i = 0; i < 25; i++) {
-                  const orderData = {
-                      id: i,
-                      description: 'Tiger Roll Tempura',
-                      price: '10€'
-                  };
-                  orders.push(orderData);
-                  res(orders);
-              }
-          })
-          .catch((err) => {
-            rej(err);
-          })
-    });
-  }*/
+
 }

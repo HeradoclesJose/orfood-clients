@@ -26,15 +26,14 @@ export class AppComponent {
     this.platform.ready().then(() => {
         this.storage.get('token')
             .then((data) => {
-                if (data) { // If there is a sesion
+                if (data) { // If there is a session
                     this.navCtrl.navigateForward('/tabs')
                         .then(() => {
                             setTimeout(() => {
                                 this.hideSplashAndStatusBar();
                             }, 1000);
                         })
-                        .catch((error) => {
-                            console.log(error);
+                        .catch(() => {
                             this.hideSplashAndStatusBar();
                         });
                 } else {

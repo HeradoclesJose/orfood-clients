@@ -23,7 +23,6 @@ export class TabOrdersPage {
     private intervalFrequenzy: number = 90000; // A minute and a half, could be increased
     private qrLoading: boolean = false;
 
-
     constructor(
       private orderService: OrdersService,
       private qr: QrService,
@@ -50,7 +49,7 @@ export class TabOrdersPage {
               .then((data: Array<Order>) => {
                   if (data.length > 0) {
                       this.thereIsOrders = true;
-                      data.forEach((order: Order, index: number) => {
+                      data.forEach((order: Order) => {
                           const isAlreadyInList: boolean = this.dataList.some((orderInList: Order) => {
                               return orderInList.orderId === order.orderId;
                           });
@@ -92,11 +91,23 @@ export class TabOrdersPage {
                   phone: order.phone
               }
           };
-          this.navCtrl.navigateForward(['/order-details'], navigationExtras); // Redirect to map
+          this.navCtrl.navigateForward(['/order-details'], navigationExtras);
           })
-          .catch((error) => {
+          .catch(async (error) => {
             console.log('QRGeneratingError', error);
             this.qrLoading = false;
+            const qrError: any = await this.alertCtrl.create({
+                header: 'Error',
+                message: 'Ocurrió un error al intentar generar el codigo QR del pedido',
+                buttons: [
+                    {
+                        text: 'Aceptar',
+                        role: 'cancel',
+                        cssClass: 'secondary'
+                    }
+                ]
+            });
+            await qrError.present();
           });
   }
 
