@@ -48,14 +48,12 @@ export class HomePage {
                 }
                 this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION)
                     .then((data2: any) => {
-                        console.log(data2);
                         if (!data2.hasPermission) {
                            permissionToAskFor.push(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION);
                         }
                         if (permissionToAskFor.length > 0) {
                             this.androidPermissions.requestPermissions(permissionToAskFor)
                                 .then((permissionsData: any) => {
-                                    console.log(permissionsData);
                                     if (permissionsData.hasPermission) {
                                         // Lets check if gps is enabled
                                         this.diagnostic.isLocationEnabled()
@@ -97,9 +95,6 @@ export class HomePage {
                   text: 'Cancelar',
                   role: 'cancel',
                   cssClass: 'alertCtrl',
-                  handler: () => {
-                      console.log('Cancelado');
-                  }
               },
               {
                   text: 'Ok',

@@ -36,21 +36,18 @@ export class QrScannerPage implements OnInit {
 
                   // start scanning
                   this.scanSubscription = this.qrScanner.scan().subscribe(async (text: string) => {
-                      console.log('Scanned something', text);
                       this.qrScanner.hide(); // hide camera preview
                       this.scanSubscription.unsubscribe(); // stop scanning
-                      // Any by now...
                       let QRJson: any = null;
                       try {
                           QRJson = JSON.parse(text);
                       } catch (error) {
-                          console.log('error', error);
+                          console.log('ErrorParsingQR', error);
                       }
                       if (QRJson) {
-                          // Gotta check it's a json with the structure I want
+                          // Gotta check if it's a json with the structure I want
                           this.jwtDecoder.getBody()
                               .then((body) => {
-                                  console.log(body);
                                   const navigationExtras: NavigationExtras = {
                                       queryParams: {
                                           deliveryId: QRJson.deliveryId,
@@ -60,7 +57,6 @@ export class QrScannerPage implements OnInit {
                                           deliveryGuyId: body.sub
                                       }
                                   };
-                                  console.log('json', navigationExtras);
                                   const updateData: OrderStatusData = {
                                       orderId: QRJson.deliveryId,
                                       wcStatus: 'sending'
@@ -71,16 +67,47 @@ export class QrScannerPage implements OnInit {
                                               this.navCtrl.navigateForward(['/map'], navigationExtras); // Redirect to map
                                           });
                                       })
-                                      .catch((err) => {
-                                          console.log(err);
-                                          this.zone.run(() => {
-                                              this.navCtrl.navigateForward('/home'); // Update was not possible
+                                      .catch((error) => {
+                                          console.log('UpdateToSendingError', error);
+                                          this.zone.run(async () => {
+                                              const alert: any = await this.alertCtrl.create({
+                                                  header: 'Error',
+                                                  message: 'No fue posible realizar la actualización de estado a \"Enviando\"',
+                                                  buttons: [
+                                                      {
+                                                          text: 'Aceptar',
+                                                          handler: () => {
+                                                              this.zone.run(() => {
+                                                                  this.navCtrl.navigateForward('/home'); // Update was not possible
+                                                              });
+                                                          }
+                                                      }
+                                                  ]
+                                              });
+                                              await alert.present();
                                           });
                                       });
                               })
                               .catch(() => {
                                   this.zone.run(() => {
-                                      this.navCtrl.navigateForward(''); // Token was not founded... or other thing...
+                                      this.navCtrl.navigateForward('') // Token was not founded... or unknown error
+                                        .then(async () => {
+                                          const alert: any = await this.alertCtrl.create({
+                                              header: 'Error',
+                                              message: 'Su sesión expiró',
+                                              buttons: [
+                                                  {
+                                                      text: 'Aceptar',
+                                                      handler: () => {
+                                                          this.zone.run(() => {
+                                                              this.navCtrl.navigateForward('/home'); // Update was not possible
+                                                          });
+                                                      }
+                                                  }
+                                              ]
+                                          });
+                                          await alert.present();
+                                      });
                                   });
                               });
                       } else {
@@ -102,23 +129,22 @@ export class QrScannerPage implements OnInit {
                   });
                   this.qrScanner.show();
               } else if (status.denied) {
-                  console.log('denied');
+                  console.log('PermissionsAreDenied');
                   this.qrScanner.openSettings();
                   // camera permission was permanently denied
                   // you must use QRScanner.openSettings() method to guide the user to the settings page
                   // then they can grant the permission from there
               } else {
-                  console.log('denied not permanently');
+                  console.log('PermissionsDeniedNotPermanently');
                   // permission was denied, but not permanently. You can ask for permission again at a later time.
               }
           })
-          .catch((e: any) => {
-              console.log('Error is', e);
+          .catch((error) => {
+              console.log('ErrorPreparingScanner', error);
               this.navCtrl.navigateBack('/home');
           });
   }
 
-  // Gotta see if there is anothe life cycle method now
   ionViewWillLeave() {
     this.qrScanner.destroy();
     if (this.scanSubscription) {

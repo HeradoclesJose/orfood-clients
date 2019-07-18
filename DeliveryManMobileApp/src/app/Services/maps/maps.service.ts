@@ -25,17 +25,14 @@ export class MapsService {
             // Set the key
             url = url + '&key=' + DIRECTIONS_API_KEY;
             // set Mode
-            // Put a switch here
-            url = url + '&mode=driving'; // Hardcoded by now
+            url = url + '&mode=driving'; // only driving allowed right now
             // Some Hardcoded options
             url = url + '&language=es&units=metric';
             this.http.get(url, {}, {})
                 .then((data: any) => {
                     const json: any = JSON.parse(data.data);
-                    console.log(json);
                     if (json.routes.length > 0) {
                         const routeDrawing = json.routes[0].overview_polyline;
-                        console.log(this.polyline);
                         if (this.polyline !== null) {
                             this.polyline.remove();
                         }
@@ -60,14 +57,13 @@ export class MapsService {
     }
 
     drawPolyline(map: any, origin: string, destination: string) {
-        return new Promise((resolve) => {
+        return new Promise((res, rej) => {
             // Set te points
             let url = this.baseUrl + '?origin=' + origin + '&destination=' + destination;
             // Set the key
             url = url + '&key=' + DIRECTIONS_API_KEY;
             // set Mode
-            // Put a switch here
-            url = url + '&mode=driving'; // Hardcoded by now
+            url = url + '&mode=driving'; // only driving allowed right now
             // Some Hardcoded options
             url = url + '&language=es&units=metric';
             this.http.get(url, {}, {})
@@ -84,11 +80,11 @@ export class MapsService {
                         width: 2.5
                     }).then((polyline: any) => {
                         this.polyline = polyline;
-                        resolve();
+                        res();
                     });
                 })
                 .catch((error) => {
-                    console.log(error);
+                    rej(error);
                 });
         });
     }

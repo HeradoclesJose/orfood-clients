@@ -12,12 +12,15 @@ export class JwtDecoderService {
   constructor(private storage: Storage) {}
 
   getBody(): Promise<any> {
-    return new Promise((resolve) => {
+    return new Promise((res, rej) => {
         this.storage.get('token')
             .then((token: string) => {
               const splitToken: Array<string> = token.split('.');
               const body = atob(splitToken[1]);
-              resolve(JSON.parse(body));
+              res(JSON.parse(body));
+            })
+            .catch((error) => {
+                rej(error);
             });
     });
   }

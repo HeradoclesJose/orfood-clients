@@ -19,11 +19,10 @@ export class SocketService {
   connect(initData: SocketData) { // Gotta use this id to make the room
       this.socket = io(this.url);
       this.socket.emit('create', JSON.stringify(initData));
-      this.roomCreated = true; // Hoping is sycronous
+      this.roomCreated = true;
   }
 
   send(event: string, message: SocketData) {
-      console.log('voy a enviar', this.socket);
       if (this.socket && this.roomCreated) {
           this.socket.emit(event, JSON.stringify(message));
       }

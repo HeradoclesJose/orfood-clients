@@ -34,20 +34,24 @@ export class LoginPage {
       this.subscription.unsubscribe();
   }
 
-  login() {
-      this.loading = true;
-      this.auth.login(this.loginData)
-          .then(async (data: any) => {
-            console.log('login data', data); // Check server response to allow login
-            this.loading = false;
-            if (data.status === '200' && data.message === 'Inicio exitoso') {
-                this.loginData.user = '';
-                this.loginData.password = '';
-                this.navCtrl.navigateForward('/home');
-            } else {
+    login() {
+        this.loading = true;
+        this.auth.login(this.loginData)
+            .then(async (data: any) => {
+                this.loading = false;
+                if (data.status === '200' && data.message === 'Inicio exitoso') {
+                    this.loginData.user = '';
+                    this.loginData.password = '';
+                    this.navCtrl.navigateForward('/tabs');
+                }
+                // Maybe an unnecessary if, but... extra security
+            })
+            .catch(async (error) => {
+                console.log('LoginError', error);
+                this.loading = false;
                 const alert: any = await this.alertCtrl.create({
                     header: 'Error',
-                    message: data.message,
+                    message: error.message,
                     buttons: [
                         {
                             text: 'Aceptar',
@@ -57,13 +61,7 @@ export class LoginPage {
                     ]
                 });
                 await alert.present();
-            }
-          })
-          .catch((error) => {
-            // Show error message for user
-            this.loading = false;
-            console.log(error);
-          });
-  }
+            });
+    }
 
 }

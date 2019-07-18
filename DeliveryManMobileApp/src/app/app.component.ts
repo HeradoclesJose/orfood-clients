@@ -37,16 +37,14 @@ export class AppComponent {
                                 this.hideSplashAndStatusBar();
                             }, 1000);
                         })
-                        .catch((error) => {
-                            console.log(error);
+                        .catch(() => {
                             this.hideSplashAndStatusBar();
                         });
                 } else {
                     this.hideSplashAndStatusBar();
                 }
             })
-            .catch((error) => {
-                console.log(error);
+            .catch(() => {
                 this.hideSplashAndStatusBar();
             });
     });
