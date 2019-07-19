@@ -5,12 +5,15 @@
 </ion-header>
 
 <ion-content>
+
   <div class="qr-modal-screen" *ngIf="qrLoading" >
     <ion-spinner name="circles"></ion-spinner>
   </div>
-  <ion-list>
-    <ion-list-header>Filtros</ion-list-header>
 
+  <ion-item class="filters-button" (click)="toggleFilter(group)">
+    <ion-label>Filtros</ion-label>
+  </ion-item>
+  <div *ngIf="this.filtersOpen">
     <ion-item>
       <ion-label>Tiempo</ion-label>
       <ion-select placeholder="Elegir">
@@ -28,8 +31,7 @@
         <ion-select-option value="200+">200€+</ion-select-option>
       </ion-select>
     </ion-item>
-
-  </ion-list>
+  </div>
 
   <ion-list>
     <div *ngIf="this.loading" text-center >
@@ -37,7 +39,7 @@
       <p class="loadingOrdersText">Cargando pedidos</p>
     </div>
     <div *ngIf="!this.loading" >
-      <ion-item *ngFor="let order of dataList" (click)="goToOrderDetails(order)" detail>
+      <ion-item *ngFor="let order of this.ordersInDisplay" (click)="goToOrderDetails(order)" detail>
         <ion-label text-wrap>
           <ion-text color="primary">
             <h3>Pedido #{{order.orderId}}</h3>
@@ -52,10 +54,10 @@
   </ion-list>
 
   <!--Will implement this in later versions-->
-  <!-- <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+   <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
    <ion-infinite-scroll-content
            loadingSpinner="bubbles"
            loadingText="Cargando...">
    </ion-infinite-scroll-content>
- </ion-infinite-scroll>-->
+ </ion-infinite-scroll>
 </ion-content>

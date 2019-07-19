@@ -41,8 +41,23 @@ export class TabOrdersPage {
             }
             this.loading = false;
           })
-          .catch((error) => {
+          .catch( (error) => {
             console.log('getOrdersError', error);
+            this.navCtrl.navigateBack('')
+                .then(async () => {
+                    const qrError: any = await this.alertCtrl.create({
+                        header: 'Error',
+                        message: 'Su sesión ha expirado',
+                        buttons: [
+                            {
+                                text: 'Aceptar',
+                                role: 'cancel',
+                                cssClass: 'secondary'
+                            }
+                        ]
+                    });
+                    await qrError.present();
+                });
           });
       this.ordersInterval = setInterval(() => {
           this.orderService.getOrdersInDelivery()

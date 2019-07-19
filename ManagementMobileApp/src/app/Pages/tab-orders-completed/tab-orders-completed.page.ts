@@ -13,9 +13,13 @@ import { QrService } from '../../Services/qr/qr.service';
   styleUrls: ['./tab-orders-completed.page.scss'],
 })
 export class TabOrdersCompletedPage implements OnInit {
-    private dataList: Array<Order> = [];
+
+    private ordersInDisplay: Array<Order> = [];
+    private ordersInStorage: Array<Order> = [];
     private loading: boolean = true;
     private qrLoading: boolean = false;
+    private amountOfOrdersPerLoading: number = 5;
+    private filtersOpen: boolean = false;
 
     constructor(
         private orderService: OrdersService,
@@ -27,7 +31,12 @@ export class TabOrdersCompletedPage implements OnInit {
     ngOnInit() {
         this.orderService.getOrdersInDelivery()
             .then((data: Array<Order>) => {
-                this.dataList = data;
+                this.ordersInStorage = data;
+                if (this.ordersInStorage.length > this.amountOfOrdersPerLoading) {
+                    this.ordersInDisplay = this.ordersInStorage.splice(0, this.amountOfOrdersPerLoading);
+                } else {
+                    this.ordersInDisplay = this.ordersInStorage;
+                }
                 this.loading = false;
             })
             .catch((error) => {
@@ -75,6 +84,20 @@ export class TabOrdersCompletedPage implements OnInit {
                 });
                 await qrError.present();
             });
+    }
+
+    loadData(event) {
+        setTimeout(() => {
+            event.target.complete();
+            this.ordersInDisplay = this.ordersInDisplay.concat(this.ordersInStorage.splice(0, this.amountOfOrdersPerLoading));
+            if (this.ordersInStorage.length <= 0) {
+                event.target.disabled = true;
+            }
+        }, 500);
+    }
+
+    toggleFilter() {
+        this.filtersOpen = !this.filtersOpen;
     }
 
 }
