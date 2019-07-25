@@ -33,7 +33,6 @@ export class QrScannerPage implements OnInit {
           .then((status: QRScannerStatus) => {
               if (status.authorized) {
                   // camera permission was granted
-
                   // start scanning
                   this.scanSubscription = this.qrScanner.scan().subscribe(async (text: string) => {
                       this.qrScanner.hide(); // hide camera preview

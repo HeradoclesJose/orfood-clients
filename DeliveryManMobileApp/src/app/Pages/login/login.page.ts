@@ -4,8 +4,6 @@ import { NavController, AlertController, Platform } from '@ionic/angular';
 // Services
 import { AuthService } from '../../Services/auth/auth.service';
 
-// Models
-import { ServerResponse } from '../../Interfaces/server-response';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +40,7 @@ export class LoginPage {
                 if (data.status === '200' && data.message === 'Inicio exitoso') {
                     this.loginData.user = '';
                     this.loginData.password = '';
-                    this.navCtrl.navigateForward('/tabs');
+                    this.navCtrl.navigateForward('/home');
                 }
                 // Maybe an unnecessary if, but... extra security
             })
