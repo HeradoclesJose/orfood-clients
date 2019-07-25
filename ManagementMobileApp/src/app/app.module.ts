@@ -12,8 +12,9 @@ import { AppComponent } from './app.component';
 // Providers
 import { HTTP } from '@ionic-native/http/ngx';
 import { Printer } from '@ionic-native/printer/ngx';
+import { NativeAudio } from '@ionic-native/native-audio/ngx';
 
-// Models
+// Modules
 import { IonicStorageModule } from '@ionic/storage';
 
 
@@ -26,6 +27,7 @@ import { IonicStorageModule } from '@ionic/storage';
     SplashScreen,
     Printer,
     HTTP,
+    NativeAudio,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

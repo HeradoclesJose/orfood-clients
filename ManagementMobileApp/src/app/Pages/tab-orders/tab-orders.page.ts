@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { NavigationExtras } from '@angular/router';
-import { AlertController, NavController } from '@ionic/angular';
+import {AlertController, NavController, Platform} from '@ionic/angular';
 
 // Services
 import { OrdersService } from '../../Services/orders/orders.service';
 import { AuthService } from '../../Services/auth/auth.service';
 import { QrService } from '../../Services/qr/qr.service';
+import { NativeAudio } from '@ionic-native/native-audio/ngx';
 
 // Models
 import { Order } from '../../Interfaces/order';
@@ -29,7 +30,14 @@ export class TabOrdersPage {
       private alertCtrl: AlertController,
       private auth: AuthService,
       private navCtrl: NavController,
-      ) {}
+      private nativeAudio: NativeAudio,
+      private platform: Platform
+      ) {
+        this.platform.ready()
+            .then(() => {
+                this.nativeAudio.preloadSimple('alert', 'assets/alert.mp3');
+            });
+    }
 
 
     ionViewWillEnter() {
@@ -70,6 +78,12 @@ export class TabOrdersPage {
                           });
                           if (!isAlreadyInList) {
                               this.dataList.push(order);
+                              // This will only be played once even if it is executed multiple times
+                              // It seems like it can't play the sound again while it its already being played
+                              this.nativeAudio.play('alert').then(() => {},
+                                  (error) => {
+                                    console.log('PlaySoundError', error);
+                                  });
                           }
                       });
                   } else {
