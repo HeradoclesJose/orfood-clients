@@ -1,0 +1,137 @@
+<!-- add tracking page in wordpress -->
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+  integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I="
+  crossorigin="anonymous"
+></script>
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDA3qYgCPP3cd3VPKjzQXX-eqjn1e1KEUQ&callback=initMap"
+  async
+  defer
+></script>
+
+<h3>Rastreo</h3>
+
+<div id="map"></div>
+
+<p style="text-align:center; padding-top:3%; font-weight:bold; margin-bottom:0">
+  Seleccione una orden para rastrear su Comida.
+</p>
+<p style="text-align:center; margin-bottom:0">
+  Solo ordenes en proceso de envio.
+</p>
+
+<div>
+  <div style="text-align:center;">
+    <div style="display:inline-flex;">
+      <div class="box yellow"></div>
+      <div style="margin-left:5px;">Repartidor</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;">
+    <div style="display:inline-flex;padding-right:20px;">
+      <div class="box green"></div>
+      <div style="margin-left:6px;">Destino</div>
+    </div>
+  </div>
+</div>
+<div>
+  <br />
+  <div id="myDiv"></div>
+  <div id="buttonDiv"></div>
+  <div id="info"></div>
+</div>
+
+<!--
+	AIzaSyDA3qYgCPP3cd3VPKjzQXX-eqjn1e1KEUQ
+-->
+[wbcr_php_snippet id="2531" title="get-all-orders-from-user"]
+
+<!-- IN PLUGIN SCRIPT N STYLES OF PAGE -->
+<!-- SCRIPT
+var map;
+var marker;
+var destinationMarker;
+var markers = [];
+
+
+function initMap() {
+  
+	let spain = {lat: 39.8596584, lng: -12.7036393};
+	map = new google.maps.Map(
+    document.getElementById('map'), {zoom: 3, center: spain});
+ 
+}
+
+-->
+
+<!-- 
+    Styles
+
+    #map {
+ height: 450px;
+ width: 100%; 
+	margin: 0 auto 0 auto;
+	padding-bottom:3%;
+}
+
+#myDiv{
+	width:40%;
+	margin: 0 auto 0 auto;
+	  display: flex;
+  align-items: center;
+  justify-content: center;
+	
+}
+
+#buttonDiv{
+	
+	width:40%;
+	margin: 0 auto 0 auto;
+	  display: flex;
+  align-items: center;
+  justify-content: center;
+	
+}
+
+.selectStyle{
+	border-radius:12px;
+	background-color:white;
+	color:black;
+	margin: 0 auto 0 auto;
+
+	padding-bottom:2px;
+	padding-top:2px;
+	width:40%;
+	height:25%;
+	
+}
+
+.buttonStyle{
+	border-radius:12px;
+	height:10%;
+	width:25%;
+	/*padding-top:2px;*/
+	margin-top:2%;
+}
+
+
+.box{
+    
+    height:7px;
+    width:7px;
+    margin-top:10px;
+  
+}
+.yellow{
+        background-color:yellow;
+    }
+.green{
+        background-color:green;
+    }
+
+
+ -->
