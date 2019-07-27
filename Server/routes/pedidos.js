@@ -389,7 +389,10 @@ module.exports = (app, mysql) => {
           console.log('dataItem *------ ', dataItem);
 
           if (req.body.filterType.toLowerCase() === 'price') {
-            let priceWithoutCurrency = dataItem.total.replace('€', '');
+            let priceWithoutCurrency = parseInt(
+              dataItem.total.replace(/€/g, '')
+            );
+
             if (
               priceWithoutCurrency > req.body.filterValue[0] &&
               priceWithoutCurrency < req.body.filterValue[1]
@@ -405,6 +408,27 @@ module.exports = (app, mysql) => {
               console.log('data push');
               dataResult.push(dataItem);
             }
+          }
+
+          if (req.body.filterType.toLowerCase() === 'price-time') {
+            let priceWithoutCurrency = parseInt(
+              dataItem.total.replace(/€/g, '')
+            );
+
+            if (
+              priceWithoutCurrency > req.body.filterValue.price[0] &&
+              priceWithoutCurrency < req.body.filterValue.price[1] &&
+              filterDate(
+                req.body.filterValue.time.toLowerCase(),
+                ordersIds[id][1]
+              )
+            ) {
+              dataResult.push(dataItem);
+            }
+          }
+
+          if (req.body.filterType.toLowerCase() === 'no-filter') {
+            dataResult.push(dataItem);
           }
 
           // if (meta[metarcv].meta_value.includes(req.permissions.restaurant)) {
