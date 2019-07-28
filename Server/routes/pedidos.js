@@ -393,9 +393,11 @@ module.exports = (app, mysql) => {
               dataItem.total.replace(/€/g, '')
             );
 
+            let prices = req.body.filterValue.split(',');
+
             if (
-              priceWithoutCurrency > req.body.filterValue[0] &&
-              priceWithoutCurrency < req.body.filterValue[1]
+              priceWithoutCurrency > parseInt(prices[0]) &&
+              priceWithoutCurrency < parseInt(prices[1])
             ) {
               dataResult.push(dataItem);
             }
@@ -414,10 +416,11 @@ module.exports = (app, mysql) => {
             let priceWithoutCurrency = parseInt(
               dataItem.total.replace(/€/g, '')
             );
+            let prices = req.body.filterValue.price.split(',');
 
             if (
-              priceWithoutCurrency > req.body.filterValue.price[0] &&
-              priceWithoutCurrency < req.body.filterValue.price[1] &&
+              priceWithoutCurrency > parseInt(prices[0]) &&
+              priceWithoutCurrency < parseInt(prices[1]) &&
               filterDate(
                 req.body.filterValue.time.toLowerCase(),
                 ordersIds[id][1]
