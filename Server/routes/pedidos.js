@@ -396,8 +396,8 @@ module.exports = (app, mysql) => {
             let prices = req.body.filterValue.split(',');
 
             if (
-              priceWithoutCurrency > parseInt(prices[0]) &&
-              priceWithoutCurrency < parseInt(prices[1])
+              priceWithoutCurrency >= parseInt(prices[0]) &&
+              priceWithoutCurrency <= parseInt(prices[1])
             ) {
               dataResult.push(dataItem);
             }
@@ -416,15 +416,14 @@ module.exports = (app, mysql) => {
             let priceWithoutCurrency = parseInt(
               dataItem.total.replace(/€/g, '')
             );
-            let prices = req.body.filterValue.price.split(',');
+
+            let bodyFilterValue = JSON.parse(req.body.filterValue);
+            let prices = bodyFilterValue.price.split(',');
 
             if (
-              priceWithoutCurrency > parseInt(prices[0]) &&
-              priceWithoutCurrency < parseInt(prices[1]) &&
-              filterDate(
-                req.body.filterValue.time.toLowerCase(),
-                ordersIds[id][1]
-              )
+              priceWithoutCurrency >= parseInt(prices[0]) &&
+              priceWithoutCurrency <= parseInt(prices[1]) &&
+              filterDate(bodyFilterValue.time.toLowerCase(), ordersIds[id][1])
             ) {
               dataResult.push(dataItem);
             }
