@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="es.orfood.business" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Orfood Bussiness</name>
+    <name>Orfood Delivery</name>
     <description>App para repartidores de tiendas adscritas a Orfood.es</description>
     <author email="joseandresotero97@gmail.com" href="https://www.linkedin.com/in/josé-andrés-otero-cannistra-977b9614b/">Joseaoc</author>
     <content src="index.html" />

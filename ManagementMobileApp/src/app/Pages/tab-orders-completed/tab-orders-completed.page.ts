@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {AlertController, NavController} from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {AlertController, NavController, IonInfiniteScroll } from '@ionic/angular';
 import { OrdersService } from '../../Services/orders/orders.service';
 import { NavigationExtras } from '@angular/router';
 
@@ -13,6 +13,7 @@ import { QrService } from '../../Services/qr/qr.service';
   styleUrls: ['./tab-orders-completed.page.scss'],
 })
 export class TabOrdersCompletedPage implements OnInit {
+    @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
     private ordersInDisplay: Array<Order> = [];
     private ordersInStorage: Array<Order> = [];
@@ -20,6 +21,8 @@ export class TabOrdersCompletedPage implements OnInit {
     private qrLoading: boolean = false;
     private amountOfOrdersPerLoading: number = 5;
     private filtersOpen: boolean = false;
+    private timeFilter: string = '';
+    private priceFilter: string = '';
 
     constructor(
         private orderService: OrdersService,
@@ -29,7 +32,7 @@ export class TabOrdersCompletedPage implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.orderService.getOrdersInDelivery()
+        this.orderService.getOrdersWithFilters({ filterType: 'no-filter', filterValue: null})
             .then((data: Array<Order>) => {
                 this.ordersInStorage = data;
                 if (this.ordersInStorage.length > this.amountOfOrdersPerLoading) {
@@ -94,6 +97,40 @@ export class TabOrdersCompletedPage implements OnInit {
                 event.target.disabled = true;
             }
         }, 500);
+    }
+
+    search() {
+        this.infiniteScroll.disabled = false;
+        this.ordersInStorage.length = 0;
+        this.ordersInDisplay.length = 0;
+        let filterParams: { filterType: string, filterValue: any };
+        this.loading = true;
+        if (this.timeFilter !== '' && this.priceFilter !== '') {
+            filterParams = { filterType: 'price-time', filterValue: JSON.stringify({ price: this.priceFilter, time: this.timeFilter }) };
+        } else if (this.timeFilter !== '') {
+            filterParams = { filterType: 'time', filterValue: this.timeFilter };
+        } else if (this.priceFilter !== '') {
+            filterParams = { filterType: 'price', filterValue: this.priceFilter};
+        } else {
+            filterParams = { filterType: 'no-filter', filterValue: null};
+        }
+        this.orderService.getOrdersWithFilters(filterParams)
+            .then((data) => {
+                console.log('data', data);
+                this.ordersInStorage = data;
+                if (this.ordersInStorage.length > this.amountOfOrdersPerLoading) {
+                    this.ordersInDisplay = data.splice(0, this.amountOfOrdersPerLoading); // Doing it like before gave me problems
+                    console.log(this.ordersInDisplay);
+                } else {
+                    this.ordersInDisplay = data;
+                }
+                this.loading = false;
+            })
+            .catch((error) => {
+                console.log('OrdersWithFiltersError', error);
+                // Should show an error on screen
+                this.loading = false;
+            });
     }
 
     toggleFilter() {

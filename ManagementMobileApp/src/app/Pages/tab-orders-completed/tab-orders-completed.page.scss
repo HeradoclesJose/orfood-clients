@@ -1,3 +1,49 @@
 .filters-button {
   line-height: 28px;
+  font-size: 120%;
+  font-weight: bold;
+}
+
+.qr-modal-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 20;
+  background-color: rgba(0,0,0,0.4);
+}
+
+ion-spinner{
+  transform: scale(3) !important;
+  width: 28px;
+  height: 28px;
+}
+
+.filter-text {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.filter-icon {
+  margin-left: 2vw;
+}
+
+.search-button {
+  width: 35vw;
+  bottom: 6vh;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ordersSpinner {
+  margin-top: 10vh;
+}
+
+.button-container {
+  margin-top: 3vh;
+  display: flex;
+  justify-content: center;
 }
