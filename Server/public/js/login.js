@@ -1,9 +1,9 @@
 // App Vars
 var storage = window.localStorage;
-var url = 'http://165.22.186.58';
+var url = 'http://104.248.16.15:';
 var port = '12000';
 var loginEndpoint = '/login';
-var redirectUrl = './SignUp.html'; /** CAMBIA ESTA :D*/
+var redirectUrl = './SignUp.html';
 
 $(document).ready(function () {
 
