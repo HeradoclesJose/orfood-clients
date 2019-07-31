@@ -116,7 +116,17 @@ module.exports = (app, mysql) => {
                 foodbakery[fb].meta_value
               );
 
+              let delivDate = '';
+
               for (let oi = 0; oi < ordersInfo.length; oi += 1) {
+                if (ordersInfo[oi].meta_key === 'foodbakery_delivery_date') {
+                  delivDate = moment(ordersInfo[oi].meta_value).format(
+                    'DD/MM/YYYY'
+                  );
+
+                  dataItem.deliveryDate = delivDate;
+                }
+
                 if (ordersInfo[oi].meta_key === 'menu_items_list') {
                   // console.log(
                   //   `${ordersInfo[oi].meta_key} ${
@@ -338,8 +348,17 @@ module.exports = (app, mysql) => {
                 queries.orders.selectOrdersMeta,
                 foodbakery[fb].meta_value
               );
+              let delivDate = '';
 
               for (let oi = 0; oi < ordersInfo.length; oi += 1) {
+                if (ordersInfo[oi].meta_key === 'foodbakery_delivery_date') {
+                  delivDate = moment(ordersInfo[oi].meta_value).format(
+                    'DD/MM/YYYY'
+                  );
+
+                  dataItem.deliveryDate = delivDate;
+                }
+
                 if (ordersInfo[oi].meta_key === 'menu_items_list') {
                   // console.log(
                   //   `${ordersInfo[oi].meta_key} ${
