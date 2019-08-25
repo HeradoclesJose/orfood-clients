@@ -19,6 +19,40 @@ module.exports = (app, mysql) => {
 
     const date = new Date();
 
+    const selectRCV = await mysql.query(queries.woocommerce.selectPostMetaRCV, [req.body.orderId]);
+    
+
+    const rcvId = selectRCV[0].meta_value.split(';')[1].split(':')[1];
+    console.log('rcvId ', rcvId);
+    
+
+    const idFoodBakery = await mysql.query(queries.woocommerce.selectPostMetaFoodBakeryFirst,[rcvId])
+    console.log('idFoodBakery ', idFoodBakery);
+
+    let statusFoodBakery = "";
+    switch (req.body.wcStatus){
+      case 'sending' : {
+        statusFoodBakery = 'Enviando';
+        break;
+      }
+      case 'cook' : {
+        statusFoodBakery = 'Cocinando';
+        break;
+      }
+      case 'finished' : {
+        statusFoodBakery = 'Completado';
+        break;
+      }
+
+    }
+
+    const updateFoodBakeryStatus = await mysql.query(queries.woocommerce.updateFoodBakeryStatus, [statusFoodBakery, idFoodBakery[0].meta_value]);
+    console.log('update status foodbakery ', updateFoodBakeryStatus);
+    if (updateFoodBakeryStatus.affectedRows === 0) {
+      return res.status(500).send({
+        message: 'Error actualizando la base de datos, foodbakery meta no encontrado'
+      });
+    }
     req.body.wcStatus = `wc-${req.body.wcStatus}`;
     const updatePromise = await mysql.query(queries.woocommerce.update, [
       req.body.wcStatus,
@@ -26,6 +60,9 @@ module.exports = (app, mysql) => {
       date,
       req.body.orderId
     ]);
+
+    
+
 
     if (updatePromise.affectedRows === 0) {
       return res.status(500).send({
