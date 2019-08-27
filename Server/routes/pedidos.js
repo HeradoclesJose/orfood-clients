@@ -78,7 +78,8 @@ module.exports = (app, mysql) => {
       );
 
       dataItem.orderDate = moment(ordersIds[id][1]).format('DD/MM/YYYY');
-      dataItem.orderId = ordersIds[id][0];
+      dataItem.woocommerceId = ordersIds[id][0]; 
+      //dataItem.orderId = ordersIds[id][0];
 
       for (let metarcv = 0; metarcv < meta.length; metarcv += 1) {
         if (meta[metarcv].meta_key.indexOf('rcv') > -1) {
@@ -111,6 +112,7 @@ module.exports = (app, mysql) => {
             }
 
             if (foodbakery[fb].meta_key === 'foodbakery_transaction_order_id') {
+               dataItem.orderId = parseInt(foodbakery[fb].meta_value)
               let ordersInfo = await mysql.query(
                 queries.orders.selectOrdersMeta,
                 foodbakery[fb].meta_value
@@ -311,7 +313,7 @@ module.exports = (app, mysql) => {
       );
 
       dataItem.orderDate = moment(ordersIds[id][1]).format('DD/MM/YYYY');
-      dataItem.orderId = ordersIds[id][0];
+      dataItem.woocommerceId = ordersIds[id][0];
 
       for (let metarcv = 0; metarcv < meta.length; metarcv += 1) {
         if (meta[metarcv].meta_key.indexOf('rcv') > -1) {
@@ -344,6 +346,7 @@ module.exports = (app, mysql) => {
             }
 
             if (foodbakery[fb].meta_key === 'foodbakery_transaction_order_id') {
+              dataItem.orderId = parseInt(foodbakery[fb].meta_value);
               let ordersInfo = await mysql.query(
                 queries.orders.selectOrdersMeta,
                 foodbakery[fb].meta_value
@@ -352,7 +355,7 @@ module.exports = (app, mysql) => {
 
               for (let oi = 0; oi < ordersInfo.length; oi += 1) {
                 if (ordersInfo[oi].meta_key === 'foodbakery_delivery_date') {
-                  delivDate = moment(ordersInfo[oi].meta_value).format(
+                   delivDate = moment(ordersInfo[oi].meta_value).format(
                     'DD/MM/YYYY'
                   );
 
