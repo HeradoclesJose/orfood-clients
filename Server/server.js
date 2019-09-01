@@ -78,9 +78,20 @@ app.listen(app.get('port'), () => {
   console.log(`Express server () listening on localhost:${app.get('port')}`);
 });
 
+// ssl settings
+
+var fs = require('fs');
+var https = require('https');
+
+var options = { 
+    key: fs.readFileSync('/etc/letsencrypt/live/orfood.es/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/orfood.es/fullchain.pem'),
+  }
+
 // Starting socket.io for the Geolocation service
-const server = http.createServer(app);
+const server = https.createServer(options, app);
 const io = socketIo(server);
+
 
 // Setting up the Sockets
 

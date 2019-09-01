@@ -1,5 +1,5 @@
 var storage = window.localStorage;
-var url = 'http://104.248.16.15:';
+var url = 'http://104.248.16.15';
 var port = '12000';
 var signUpEndpoint = '/signup';
 var restaurantEndpoint = '/restaurantes';

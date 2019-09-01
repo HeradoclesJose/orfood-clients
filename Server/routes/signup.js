@@ -7,7 +7,8 @@ const hash = require('../auth/hashpass')
 
 // Giving express access to route.
 module.exports = function (app) {
-  app.post('/signup', isAuth.isAuthenticated, function (req, res) {
+	//isAuth.isAuthenticated
+  app.post('/signup',isAuth.isAuthenticated,  function (req, res) {
     // We create the Document and recover the model.
     var users = mongoose.model('users')
 

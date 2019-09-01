@@ -1,19 +1,20 @@
 {
   "db": {
-    "url": "mongodb://catechdev:masterkey@cluster0-shard-00-00-slpfd.mongodb.net:27017,cluster0-shard-00-01-slpfd.mongodb.net:27017,cluster0-shard-00-02-slpfd.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true",
-    "mysqlUser":"blackstorm",
-    "mysqlPassword":"blackstorm",
-    "mysqlDatabase":"165_22_186_58",
-    "mysqlHost":"165.22.186.58",
-    "mysqlPort":"3306"
+    "url": "mongodb://orfooddev:#qwerty1234@orfooddev-shard-00-00-y0gkd.mongodb.net:27017,orfooddev-shard-00-01-y0gkd.mongodb.net:27017,orfooddev-shard-00-02-y0gkd.mongodb.net:27017/test?ssl=true&replicaSet=OrfoodDev-shard-0&authSource=admin&retryWrites=true&w=majority",
+    "mysqlUser": "orfooddb",
+    "mysqlPassword": "#qwerty1234DB",
+    "mysqlDatabase": "sushiartist_pedido_orfood_es",
+    "mysqlHost": "104.248.16.15",
+    "mysqlPort": "3306"
   },
 
   "hashpassword": {
-    "password": "HeraCatJoseanKawai", "salt": "$2a$10$nGbo.FOZB9Chu1vUEmbAqOCDTG005pUtJRuc6TH1LkgZ9yZPZk/a6"
+    "password": "HeraCatJoseanKawai",
+    "salt": "$2a$10$nGbo.FOZB9Chu1vUEmbAqOCDTG005pUtJRuc6TH1LkgZ9yZPZk/a6"
   },
 
   "secret": {
     "token": "OrfoodTokenCatech"
   }
-
 }
+

@@ -122,8 +122,8 @@ module.exports = (app, mysql) => {
 
               for (let oi = 0; oi < ordersInfo.length; oi += 1) {
                 if (ordersInfo[oi].meta_key === 'foodbakery_delivery_date') {
-                  delivDate = moment(ordersInfo[oi].meta_value).format(
-                    'DD/MM/YYYY'
+                  delivDate = moment(parseInt(ordersInfo[oi].meta_value)*1000).format(
+                    'DD/MM/YYYY HH:mm'
                   );
 
                   dataItem.deliveryDate = delivDate;
@@ -355,8 +355,8 @@ module.exports = (app, mysql) => {
 
               for (let oi = 0; oi < ordersInfo.length; oi += 1) {
                 if (ordersInfo[oi].meta_key === 'foodbakery_delivery_date') {
-                   delivDate = moment(ordersInfo[oi].meta_value).format(
-                    'DD/MM/YYYY'
+                   delivDate = moment(parseInt(ordersInfo[oi].meta_value)*1000).format(
+                    'DD/MM/YYYY HH:mm'
                   );
 
                   dataItem.deliveryDate = delivDate;
