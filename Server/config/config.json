@@ -10,11 +10,11 @@
 
   "hashpassword": {
     "password": "HeraCatJoseanKawai",
-    "salt": "$2a$10$nGbo.FOZB9Chu1vUEmbAqOCDTG005pUtJRuc6TH1LkgZ9yZPZk/a6"
+    "salt": "$3b$10$nGbz.FOZB9Chu1vUEmbAqOCDTG005pUtJRuc6TH1LkgZ9yZPZy/a7"
   },
 
   "secret": {
-    "token": "OrfoodTokenCatech"
+    "token": "OrfoodTokenCatechS"
   }
 }
 

@@ -25,8 +25,8 @@ exports.isAuthenticated = function (req, res, next) {
       reqError(res, 403, 'El token ha expirado')
     }
 
-    if (payload.permissions.level === 'admin') next()
-    else if (req.path === '/qrcreate' || '/pedidos' || '/reportes' & payload.permissions.level === 'manager') next()
+    if (payload.permissions.level === 'admin') //next()
+    else if (req.path === '/qrcreate' || '/pedidos' || '/reportes' & payload.permissions.level === 'manager') //next()
     else reqError(res, 403, 'No tienes permisos para ver esto')
   } catch (err) {
     console.log(err)
