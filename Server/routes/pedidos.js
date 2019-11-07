@@ -129,6 +129,9 @@ module.exports = (app, mysql) => {
                   dataItem.deliveryDate = delivDate;
                 }
 
+		if(ordersInfo[oi].meta_key === 'menu_order_fee_type') {
+			dataItem.orderStatus = ordersInfo[oi].meta_value;
+		}
                 if (ordersInfo[oi].meta_key === 'menu_items_list') {
                   // console.log(
                   //   `${ordersInfo[oi].meta_key} ${
@@ -175,9 +178,14 @@ module.exports = (app, mysql) => {
           dataItem.clientName = `${dataItem.name} ${dataItem.lastName}`;
           delete dataItem.name;
           delete dataItem.lastName;
-          console.log('dataItem *------ ', dataItem);
-
-          if (meta[metarcv].meta_value.includes(req.permissions.restaurant)) {
+          //console.log('dataItem *------ ', dataItem);
+	
+	  let restaurantSplit= meta[metarcv].meta_value.split(";s:")[2].split(":")[1];
+	  let restaurantSubstring = restaurantSplit.substring(1,restaurantSplit.length-1);
+	  console.log("META SPLIT ", restaurantSubstring);
+	  console.log("restaurant ", req.permissions.restaurant);
+	  console.log("equals ", req.permissions.restaurant === restaurantSubstring);
+          if (req.permissions.restaurant === restaurantSubstring) {
             // dataItem.restaurant = req.permissions.restaurant;
             dataResult.push(dataItem);
           }
@@ -362,6 +370,10 @@ module.exports = (app, mysql) => {
                   dataItem.deliveryDate = delivDate;
                 }
 
+		if(ordersInfo[oi].meta_key === 'menu_order_fee_type') {
+			dataItem.orderStatus = ordersInfo[oi].meta_value;
+		}
+
                 if (ordersInfo[oi].meta_key === 'menu_items_list') {
                   // console.log(
                   //   `${ordersInfo[oi].meta_key} ${
@@ -410,6 +422,14 @@ module.exports = (app, mysql) => {
           delete dataItem.lastName;
           console.log('dataItem *------ ', dataItem);
 
+         let restaurantSplit= meta[metarcv].meta_value.split(";s:")[2].split(":")[1];
+	  let restaurantSubstring = restaurantSplit.substring(1,restaurantSplit.length-1);
+	  console.log("META SPLIT ", restaurantSubstring);
+	  console.log("restaurant ", req.permissions.restaurant);
+	  console.log("equals ", req.permissions.restaurant === restaurantSubstring);
+          if (req.permissions.restaurant === restaurantSubstring) {
+          
+ 
           if (req.body.filterType.toLowerCase() === 'price') {
             let priceWithoutCurrency = parseInt(
               dataItem.total.replace(/€/g, '')
@@ -454,7 +474,7 @@ module.exports = (app, mysql) => {
           if (req.body.filterType.toLowerCase() === 'no-filter') {
             dataResult.push(dataItem);
           }
-
+		}
           // if (meta[metarcv].meta_value.includes(req.permissions.restaurant)) {
           // dataItem.restaurant = req.permissions.restaurant;
           // dataResult.push(dataItem);

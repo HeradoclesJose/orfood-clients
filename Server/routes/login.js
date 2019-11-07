@@ -6,7 +6,7 @@ const jwt = require('../auth/jwtmodule')
 // Giving express access to route.
 
 module.exports = function (app) {
-  app.post('/login',isAuth.isAuthenticated, function (req, res) {
+  app.post('/login', function (req, res) {
     var users = mongoose.model('users')
     var token = ''
 
